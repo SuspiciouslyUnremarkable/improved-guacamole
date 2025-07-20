@@ -149,6 +149,7 @@ def restore_placeholders_pass1(sql: str, replacements: dict) -> str:
     return sql
 
 def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None, debug: bool = False) -> str:
+    original_flat = flatten_sql_whitespace(raw_sql)
     flattened_sql, replacements = extract_placeholders(raw_sql)
     if filename and debug:
         with open(filename.replace('.sql', '_1_flattened.sql'), 'w', encoding='utf-8') as f:
@@ -179,7 +180,10 @@ def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None, debug: b
         with open(filename.replace('.sql', '_6_restored.sql'), 'w', encoding='utf-8') as f:
             f.write(restored_sql)
 
-    gc.collect()  # Clear any lingering objects between runs
+    gc.collect()
+    if filename:
+        audit_file = os.path.join("audit", os.path.basename(filename).replace(".sql", "_audit.txt"))
+        audit_flattened_comparison(raw_sql, restored_sql, audit_file)
     return restored_sql
 
 def process_file_or_directory(path: str, debug: bool = False):
@@ -203,6 +207,17 @@ def process_file_or_directory(path: str, debug: bool = False):
 
 
 import argparse
+
+
+def audit_flattened_comparison(pre_sql: str, post_sql: str, audit_path: str):
+    flattened_pre = flatten_sql_whitespace(pre_sql)
+    flattened_post = flatten_sql_whitespace(post_sql)
+
+    if flattened_pre != flattened_post:
+        os.makedirs(os.path.dirname(audit_path), exist_ok=True)
+        with open(audit_path, 'w', encoding='utf-8') as f:
+            f.write(flattened_pre + "\n")
+            f.write(flattened_post + "\n")
 
 def main():
     parser = argparse.ArgumentParser(description="Format SQL files with structured indentation.")
