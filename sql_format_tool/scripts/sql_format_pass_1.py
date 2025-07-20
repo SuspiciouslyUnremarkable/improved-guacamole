@@ -25,7 +25,7 @@ def debug_print(*args):
         print("[DEBUG]", *args)
 
 def flatten_sql(sql: str) -> str:
-    return re.sub(r"\s+", " ", sql.strip()).replace('"', '').replace("'", "")
+    return re.sub(r"\s+", "", sql.strip()).lower()
 
 def add_newlines_for_keywords(sql: str) -> str:
     keywords = [
@@ -167,7 +167,10 @@ def pass1_format_sql_file(filepath: Path, mirror: bool):
     audit_copy(temp_path, "post_format", audit_path)
     temp_path.unlink()
 
-    if flatten_sql(original_sql) != flatten_sql(remove_noqa_comments(formatted_sql)):
+    flat_before = flatten_sql(original_sql)
+    flat_after = flatten_sql(remove_noqa_comments(formatted_sql))
+  
+    if flat_before != flat_after:
         print("❌ Unexpected structural changes. Review required.")
         diff = diff_summary(original_sql, formatted_sql)
         diff_file = audit_path / f"{filepath.stem}.pass1_diff.txt"
@@ -175,8 +178,6 @@ def pass1_format_sql_file(filepath: Path, mirror: bool):
 
         # NEW: Write side-by-side flattened pre and post lines
         flat_compare_file = audit_path / f"{filepath.stem}.pass1_flat_compare.txt"
-        flat_before = flatten_sql(original_sql)
-        flat_after = flatten_sql(remove_noqa_comments(formatted_sql))
         flat_compare_file.write_text(f"{flat_before}\n{flat_after}\n", encoding='utf-8')
 
         print(f"🔍 Diff written to: {diff_file.name}")
