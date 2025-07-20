@@ -24,9 +24,11 @@ def extract_placeholders(sql: str):
 
     return sql, replacements
 
-def flatten_sql_whitespace(sql: str) -> str:
+def flatten_sql_whitespace(sql: str, remove_all_spaces: bool = False) -> str:
     sql = sql.replace("\n", " ")
     sql = re.sub(r"\s+", " ", sql)
+    if remove_all_spaces:
+        sql = sql.replace(" ", "")
     return sql.strip()
 
 def format_sql_keywords_pass1(sql: str) -> str:
@@ -196,8 +198,8 @@ def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None, debug: b
         with open(os.path.join(audit_base, f"{rel_file_base}_pass1_01_pre_format.sql"), "w", encoding="utf-8") as f:
             f.write(raw_sql)
 
-        flattened_pre = flatten_sql_whitespace(raw_sql)
-        flattened_post = flatten_sql_whitespace(restored_sql)
+        flattened_pre = flatten_sql_whitespace(raw_sql, remove_all_spaces=True)
+        flattened_post = flatten_sql_whitespace(restored_sql, remove_all_spaces=True)
 
         if flattened_pre != flattened_post:
             with open(os.path.join(audit_base, f"{rel_file_base}_pass1_02_diff.txt"), "w", encoding="utf-8") as f:
