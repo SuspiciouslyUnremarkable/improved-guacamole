@@ -20,6 +20,11 @@ SQLFLUFF_CONFIG = Path("sql_format_tool/scripts/.sqlfluff")
 
 # === PASS 1 TEMPORARY IGNORE RULES FOR DEBUGGING ===
 PASS_ONE_DEBUG_EXCLUDE_RULES = [
+    # Layout-only rules that might be safe to include after testing
+    "layout.spacing",
+    "layout.long_lines",
+    "convention.select_trailing_comma",
+    "references.special_chars",
     # "capitalisation.keywords",
     # "capitalisation.functions",
     # "layout.indent",
@@ -36,10 +41,9 @@ PASS_ONE_DEBUG_EXCLUDE_RULES = [
 PASS_ONE_EXCLUDE_RULES = [
     "ambiguous.column_count", "ambiguous.distinct", "ambiguous.join", "ambiguous.column_references", "ambiguous.set_columns", "ambiguous.join_condition",
     "aliasing.length", "aliasing.unique.column", "aliasing.self_alias.column", "aliasing.table",
-    "convention.not_equal", "convention.coalesce", "convention.select_trailing_comma", "convention.is_null", "convention.statement_brackets", "convention.left_join", "convention.casting_style", "convention.join_condition",
-    "references.from", "references.qualification", "references.keywords", "references.special_chars", "references.consistent",
+    "convention.not_equal", "convention.coalesce", "convention.is_null", "convention.statement_brackets", "convention.left_join", "convention.casting_style", "convention.join_condition",
+    "references.from", "references.qualification", "references.keywords", "references.consistent",
     "structure.simple_case", "structure.unused_cte", "structure.nested_case", "structure.subquery", "structure.using", "structure.distinct", "structure.join_condition_order", "structure.constant_expression", "structure.unused_join", "structure.column_order",
-    "layout.spacing", "layout.long_lines"
 ] + PASS_ONE_DEBUG_EXCLUDE_RULES
 # === END PASS 1 STRUCTURAL RULE EXCLUSIONS ===
 
@@ -70,13 +74,69 @@ def make_audit_path(sql_path: Path, mirror: bool = True) -> Path:
     rel_parts = sql_path.with_suffix("").parts
     return AUDIT_ROOT.joinpath(*rel_parts)
 
+def clean_case_blocks(sql: str) -> str:
+    """
+    Reformat CASE blocks with consistent indentation and no blank lines:
+
+        , CASE
+            WHEN ...
+                THEN ...
+            WHEN ...
+                THEN ...
+                ELSE ...
+            END AS ...
+
+    Handles nesting and malformed SQL gracefully.
+    """
+    lines = sql.splitlines()
+    cleaned = []
+    buffer = []
+    case_stack = []
+
+    for line in lines:
+        stripped = line.strip()
+
+        # CASE start
+        if re.match(r",?\s*CASE\b", stripped, re.IGNORECASE):
+            case_indent = re.match(r"^\s*", line).group(0)
+            case_stack.append({"indent": case_indent, "lines": [line]})
+            continue
+
+        # Inside CASE block
+        if case_stack:
+            current = case_stack[-1]
+
+            # END of CASE block
+            if re.match(r"END\b", stripped, re.IGNORECASE):
+                current["lines"].append(f"{current['indent']}    {stripped}")
+                cleaned.extend(current["lines"])
+                case_stack.pop()
+                continue
+
+            # Skip blank lines inside CASE
+            if not stripped:
+                continue
+
+            # Indent all lines inside CASE
+            current["lines"].append(f"{current['indent']}    {stripped}")
+            continue
+
+        # Not in CASE
+        cleaned.append(line)
+
+    # Append any incomplete buffers (malformed CASE blocks)
+    for leftover in case_stack:
+        cleaned.extend(leftover["lines"])
+
+    return "\n".join(cleaned)
+
 def run_sqlfluff_lint(filepath: Path, audit_path: Path) -> dict:
     result = subprocess.run([
-        "sqlfluff", "lint", str(filepath)
-        , "--format", "json"
-        , "--dialect", "snowflake"
-        , "--config", str(SQLFLUFF_CONFIG)
-        , "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
+        "sqlfluff", "lint", str(filepath),
+        "--format", "json",
+        "--dialect", "snowflake",
+        "--config", str(SQLFLUFF_CONFIG),
+        "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
     ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     try:
         audit_path.mkdir(parents=True, exist_ok=True)
@@ -90,10 +150,10 @@ def run_sqlfluff_lint(filepath: Path, audit_path: Path) -> dict:
 
 def run_sqlfluff_fix(filepath: Path):
     subprocess.run([
-        "sqlfluff", "fix", str(filepath)
-        , "--dialect", "snowflake"
-        , "--config", str(SQLFLUFF_CONFIG)
-        , "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
+        "sqlfluff", "fix", str(filepath),
+        "--dialect", "snowflake",
+        "--config", str(SQLFLUFF_CONFIG),
+        "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
     ])
 
 def get_existing_pass1_version(sql: str) -> str:
@@ -109,6 +169,7 @@ def should_skip_formatting(sql: str, filepath: Path) -> bool:
         return False
     skip = version_to_tuple(existing_version) >= version_to_tuple(PASS1_VERSION)
     if skip:
+        print(f"⏭️  Skipping {filepath.name}: already formatted with version {existing_version}")
         SKIPPED_FILES.append(str(filepath))
     return skip
 
@@ -175,13 +236,13 @@ def pass1_format_sql_file(filepath: Path, mirror: bool):
 
     original_sql = filepath.read_text(encoding='utf-8')
     if should_skip_formatting(original_sql, filepath):
-        print("⏭️  Already formatted with current or newer Pass1 version. Skipping.")
         return
 
     audit_path = make_audit_path(filepath, mirror)
 
     staged_sql = add_newlines_for_keywords(original_sql)
     staged_sql = add_newlines_before_commas(staged_sql)
+    staged_sql = "\n".join(line.rstrip() for line in staged_sql.splitlines())
 
     temp_path = filepath.with_suffix('.tmp.sql')
     temp_path.write_text(staged_sql, encoding='utf-8')
@@ -200,20 +261,22 @@ def pass1_format_sql_file(filepath: Path, mirror: bool):
 
     flat_before = flatten_sql(original_sql)
     flat_after = flatten_sql(remove_noqa_comments(formatted_sql))
-  
+
     if flat_before != flat_after:
         print("❌ Unexpected structural changes. Review required.")
         diff = diff_summary(original_sql, formatted_sql)
         diff_file = audit_path / f"{filepath.stem}.pass1_diff.txt"
         diff_file.write_text(diff, encoding='utf-8')
 
-        # NEW: Write side-by-side flattened pre and post lines
         flat_compare_file = audit_path / f"{filepath.stem}.pass1_flat_compare.txt"
         flat_compare_file.write_text(f"{flat_before}\n{flat_after}\n", encoding='utf-8')
 
         print(f"🔍 Diff written to: {diff_file.name}")
         print(f"🔍 Flattened comparison written to: {flat_compare_file.name}")
         return
+
+    # Clean up CASE formatting
+    formatted_sql = clean_case_blocks(formatted_sql)
 
     final_output = f"{PASS1_MARKER_PREFIX}{PASS1_VERSION}\n\n{formatted_sql}"
     filepath.write_text(final_output, encoding='utf-8')
