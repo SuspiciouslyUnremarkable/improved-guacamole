@@ -148,7 +148,7 @@ def restore_placeholders_pass1(sql: str, replacements: dict) -> str:
         sql = sql.replace(placeholder, original.strip())
     return sql
 
-def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None, debug: bool = False) -> str:
+def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None, debug: bool = False, mirror_audit: bool = True) -> str:
     original_flat = flatten_sql_whitespace(raw_sql)
     flattened_sql, replacements = extract_placeholders(raw_sql)
     if filename and debug:
@@ -181,16 +181,43 @@ def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None, debug: b
             f.write(restored_sql)
 
     gc.collect()
+
+    if filename:
+        rel_path = os.path.splitext(os.path.relpath(filename))[0]
+        rel_dir, rel_file = os.path.split(rel_path)
+        rel_file_base = os.path.splitext(rel_file)[0]
+        if mirror_audit:
+            audit_base = os.path.join("sql_format_tool", "audit_folder", rel_dir, rel_file_base)
+        else:
+            audit_base = os.path.join("sql_format_tool", "audit_folder")
+
+        os.makedirs(audit_base, exist_ok=True)
+
+        with open(os.path.join(audit_base, f"{rel_file_base}_pass1_01_pre_format.sql"), "w", encoding="utf-8") as f:
+            f.write(raw_sql)
+
+        flattened_pre = flatten_sql_whitespace(raw_sql)
+        flattened_post = flatten_sql_whitespace(restored_sql)
+
+        if flattened_pre != flattened_post:
+            with open(os.path.join(audit_base, f"{rel_file_base}_pass1_02_diff.txt"), "w", encoding="utf-8") as f:
+                f.write(flattened_pre + "\n")
+                f.write(flattened_post + "\n")
+
+        with open(os.path.join(audit_base, f"{rel_file_base}_pass1_03_post_format.sql"), "w", encoding="utf-8") as f:
+            f.write(restored_sql)
+
+
     if filename:
         audit_file = os.path.join("audit", os.path.basename(filename).replace(".sql", "_audit.txt"))
         audit_flattened_comparison(raw_sql, restored_sql, audit_file)
     return restored_sql
 
-def process_file_or_directory(path: str, debug: bool = False):
+def process_file_or_directory(path: str, debug: bool = False, mirror_audit: bool = True):
     if os.path.isfile(path):
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
-        _ = preprocess_and_format_sql_pass1(content, filename=path, debug=debug)
+        _ = preprocess_and_format_sql_pass1(content, filename=path, debug=debug, mirror_audit=mirror_audit)
         print(f"Processed file: {path}")
 
     elif os.path.isdir(path):
@@ -200,7 +227,7 @@ def process_file_or_directory(path: str, debug: bool = False):
                     full_path = os.path.join(root, file)
                     with open(full_path, 'r', encoding='utf-8') as f:
                         content = f.read()
-                    _ = preprocess_and_format_sql_pass1(content, filename=full_path, debug=debug)
+                    _ = preprocess_and_format_sql_pass1(content, filename=full_path, debug=debug, mirror_audit=mirror_audit)
                     print(f"Processed file: {full_path}")
     else:
         print(f"Path does not exist: {path}")
@@ -223,8 +250,9 @@ def main():
     parser = argparse.ArgumentParser(description="Format SQL files with structured indentation.")
     parser.add_argument("path", help="Path to a .sql file or directory containing .sql files")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode with intermediate file writes")
+    parser.add_argument("--no-mirror-audit", action="store_true", help="Disable folder hierarchy mirroring for audit output")
     args = parser.parse_args()
-    process_file_or_directory(args.path, debug=args.debug)
+    process_file_or_directory(args.path, debug=args.debug, mirror_audit=not args.no_mirror_audit)
 
 if __name__ == "__main__":
     main()
