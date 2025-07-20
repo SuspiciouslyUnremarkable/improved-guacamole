@@ -18,6 +18,31 @@ SUMMARY_REPORT = []
 SKIPPED_FILES = []
 SQLFLUFF_CONFIG = Path("sql_format_tool/scripts/.sqlfluff")
 
+# === PASS 1 TEMPORARY IGNORE RULES FOR DEBUGGING ===
+PASS_ONE_DEBUG_EXCLUDE_RULES = [
+    # "capitalisation.keywords",
+    # "capitalisation.functions",
+    # "layout.indent",
+    # "layout.newlines",
+    # "layout.end_of_file",
+    # "layout.functions",
+    # "layout.cte_bracket",
+    # "layout.set_operators",
+    # "layout.keyword_newline",
+]
+# === END PASS 1 TEMPORARY IGNORE RULES FOR DEBUGGING ===
+
+# === PASS 1 STRUCTURAL RULE EXCLUSIONS ===
+PASS_ONE_EXCLUDE_RULES = [
+    "ambiguous.column_count", "ambiguous.distinct", "ambiguous.join", "ambiguous.column_references", "ambiguous.set_columns", "ambiguous.join_condition",
+    "aliasing.length", "aliasing.unique.column", "aliasing.self_alias.column", "aliasing.table",
+    "convention.not_equal", "convention.coalesce", "convention.select_trailing_comma", "convention.is_null", "convention.statement_brackets", "convention.left_join", "convention.casting_style", "convention.join_condition",
+    "references.from", "references.qualification", "references.keywords", "references.special_chars", "references.consistent",
+    "structure.simple_case", "structure.unused_cte", "structure.nested_case", "structure.subquery", "structure.using", "structure.distinct", "structure.join_condition_order", "structure.constant_expression", "structure.unused_join", "structure.column_order",
+    "layout.spacing", "layout.long_lines"
+] + PASS_ONE_DEBUG_EXCLUDE_RULES
+# === END PASS 1 STRUCTURAL RULE EXCLUSIONS ===
+
 # ========== HELPER FUNCTIONS ==========
 
 def debug_print(*args):
@@ -47,8 +72,11 @@ def make_audit_path(sql_path: Path, mirror: bool = True) -> Path:
 
 def run_sqlfluff_lint(filepath: Path, audit_path: Path) -> dict:
     result = subprocess.run([
-        "sqlfluff", "lint", str(filepath), "--format", "json",
-        "--dialect", "snowflake", "--config", str(SQLFLUFF_CONFIG)
+        "sqlfluff", "lint", str(filepath)
+        , "--format", "json"
+        , "--dialect", "snowflake"
+        , "--config", str(SQLFLUFF_CONFIG)
+        , "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
     ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     try:
         audit_path.mkdir(parents=True, exist_ok=True)
@@ -62,7 +90,10 @@ def run_sqlfluff_lint(filepath: Path, audit_path: Path) -> dict:
 
 def run_sqlfluff_fix(filepath: Path):
     subprocess.run([
-        "sqlfluff", "fix", str(filepath), "--dialect", "snowflake", "--config", str(SQLFLUFF_CONFIG)
+        "sqlfluff", "fix", str(filepath)
+        , "--dialect", "snowflake"
+        , "--config", str(SQLFLUFF_CONFIG)
+        , "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
     ])
 
 def get_existing_pass1_version(sql: str) -> str:
