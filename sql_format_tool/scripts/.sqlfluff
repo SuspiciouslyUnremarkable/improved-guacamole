@@ -6,7 +6,7 @@ dialect = snowflake
 templater = dbt
 
 [sqlfluff:templater:dbt]
-project_dir = dbt
+project_dir = ../../
 
 
 

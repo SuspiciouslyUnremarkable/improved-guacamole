@@ -1,315 +1,205 @@
-import json
-import subprocess
-from pathlib import Path
 import re
-import difflib
-import shutil
-import argparse
-from datetime import datetime
-from collections import defaultdict
+import os
+import sqlparse
+import gc
+from sqlparse.sql import TokenList, Identifier, IdentifierList, Parenthesis
+from sqlparse.tokens import Keyword, DML, Punctuation
 
-# ========== CONFIG ==========
-DEBUG = False
-PASS1_VERSION = "1.0"
-PASS1_MARKER_PREFIX = "-- sqlfluff-pass1-version: "
-AUDIT_ROOT = Path("sql_format_tool/audit_folder")
-AUDIT_COUNTER = {"count": 1}  # global counter for audit file ordering
-SUMMARY_REPORT = []
-SKIPPED_FILES = []
-SQLFLUFF_CONFIG = Path("sql_format_tool/scripts/.sqlfluff")
-
-# === PASS 1 TEMPORARY IGNORE RULES FOR DEBUGGING ===
-PASS_ONE_DEBUG_EXCLUDE_RULES = [
-    # Layout-only rules that might be safe to include after testing
-    "layout.spacing",
-    "layout.long_lines",
-    "convention.select_trailing_comma",
-    "references.special_chars",
-    # "capitalisation.keywords",
-    # "capitalisation.functions",
-    # "layout.indent",
-    # "layout.newlines",
-    # "layout.end_of_file",
-    # "layout.functions",
-    # "layout.cte_bracket",
-    # "layout.set_operators",
-    # "layout.keyword_newline",
-]
-# === END PASS 1 TEMPORARY IGNORE RULES FOR DEBUGGING ===
-
-# === PASS 1 STRUCTURAL RULE EXCLUSIONS ===
-PASS_ONE_EXCLUDE_RULES = [
-    "ambiguous.column_count", "ambiguous.distinct", "ambiguous.join", "ambiguous.column_references", "ambiguous.set_columns", "ambiguous.join_condition",
-    "aliasing.length", "aliasing.unique.column", "aliasing.self_alias.column", "aliasing.table",
-    "convention.not_equal", "convention.coalesce", "convention.is_null", "convention.statement_brackets", "convention.left_join", "convention.casting_style", "convention.join_condition",
-    "references.from", "references.qualification", "references.keywords", "references.consistent",
-    "structure.simple_case", "structure.unused_cte", "structure.nested_case", "structure.subquery", "structure.using", "structure.distinct", "structure.join_condition_order", "structure.constant_expression", "structure.unused_join", "structure.column_order",
-] + PASS_ONE_DEBUG_EXCLUDE_RULES
-# === END PASS 1 STRUCTURAL RULE EXCLUSIONS ===
-
-# ========== HELPER FUNCTIONS ==========
-
-def debug_print(*args):
-    if DEBUG:
-        print("[DEBUG]", *args)
-
-def flatten_sql(sql: str) -> str:
-    return re.sub(r"\s+", "", sql.strip()).lower()
-
-def add_newlines_for_keywords(sql: str) -> str:
-    keywords = [
-        "SELECT", "FROM", "WHERE", "JOIN", "AND", "OR", "ON", "GROUP BY", "ORDER BY",
-        "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "OUTER JOIN", "FULL JOIN", "LIMIT",
+def extract_placeholders(sql: str):
+    patterns = [
+        (r"({{.*?}})", "JINJA"),
+        (r"({%-?.*?-%})", "JINJA"),
+        (r"({#.*?#})", "JINJA_COMMENT"),
+        (r"--[^\n]*", "SQL_COMMENT"),
+        (r"/\*.*?\*/", "SQL_BLOCK_COMMENT")
     ]
-    for kw in sorted(keywords, key=len, reverse=True):
-        sql = re.sub(rf"(?<!\n)\b({kw})\b", r"\n\1", sql, flags=re.IGNORECASE)
-    return sql
 
-def add_newlines_before_commas(sql: str) -> str:
-    return re.sub(r"\s*,", r"\n,", sql)
+    replacements = {}
+    counter = 1
 
-def make_audit_path(sql_path: Path, mirror: bool = True) -> Path:
-    if not mirror:
-        return AUDIT_ROOT
-    rel_parts = sql_path.with_suffix("").parts
-    return AUDIT_ROOT.joinpath(*rel_parts)
+    for pattern, label in patterns:
+        matches = re.findall(pattern, sql, re.DOTALL)
+        for match in matches:
+            key = f"__PLACEHOLDER_{label}_{counter:04d}__"
+            replacements[key] = match
+            sql = sql.replace(match, key)
+            counter += 1
 
-def clean_case_blocks(sql: str) -> str:
-    """
-    Reformat CASE blocks with consistent indentation and no blank lines:
+    return sql, replacements
 
-        , CASE
-            WHEN ...
-                THEN ...
-            WHEN ...
-                THEN ...
-                ELSE ...
-            END AS ...
+def flatten_sql_whitespace(sql: str) -> str:
+    sql = sql.replace("\n", " ")
+    sql = re.sub(r"\s+", " ", sql)
+    return sql.strip()
 
-    Handles nesting and malformed SQL gracefully.
-    """
+def format_sql_keywords_pass1(sql: str) -> str:
+    keywords = [
+        "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "OUTER JOIN", "FULL JOIN",
+        "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
+        "JOIN", "UNION", "LIMIT", "ON", "AND", "OR", "WITH", "WHEN", "THEN", "ELSE", "END"
+    ]
+
+    major_clauses = {
+        "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
+        "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "OUTER JOIN", "FULL JOIN", "JOIN"
+    }
+
+    keywords.sort(key=lambda k: (-k.count(" "), -len(k)))
+    pattern = r"(?<!\w)(?P<kw>{})(?!\w)".format("|".join(re.escape(k) for k in keywords))
+
+    def insert_newline(match):
+        kw = match.group("kw").upper()
+        prefix = "\n\n" if kw in major_clauses else "\n"
+        return prefix + match.group("kw")
+
+    return re.sub(pattern, insert_newline, sql, flags=re.IGNORECASE)
+
+def format_sql_commas_pass1(sql: str) -> str:
+    stack = []
+    select_blocks = []
+    sql = "(" + sql + ")"
+
+    for i, char in enumerate(sql):
+        if char == '(': stack.append(i)
+        elif char == ')' and stack:
+            start = stack.pop()
+            block = sql[start + 1:i].lower()
+            if 'select' in block:
+                select_blocks.append((start, i))
+
+    def in_select_block(index):
+        return any(start < index < end for start, end in select_blocks)
+
+    result = []
+    i = 0
+    buffer = ""
+    while i < len(sql):
+        char = sql[i]
+        if sql[i:i+6].lower() == 'select':
+            buffer += sql[i:i+6]; i += 6; continue
+        if char == ',':
+            if in_select_block(i):
+                result.append(buffer.strip()); result.append("\n, "); buffer = ""
+            else: buffer += char
+        elif any(i == start for start, _ in select_blocks): buffer += "("
+        elif any(i == end for _, end in select_blocks):
+            if buffer.strip(): result.append(buffer.strip())
+            result.append("\n\n)\n\n"); buffer = ""
+        else: buffer += char
+        i += 1
+    if buffer.strip(): result.append(buffer.strip())
+    final_sql = "".join(result).strip()
+    if final_sql.startswith('(') and final_sql.endswith(')'):
+        final_sql = final_sql[1:-1]
+    final_sql = re.sub(r'\n{3,}', '\n\n', final_sql)
+    return final_sql
+
+def indent_sql_by_structure_pass1(sql: str, indent: str = "    ") -> str:
     lines = sql.splitlines()
-    cleaned = []
-    buffer = []
-    case_stack = []
+    result = []
+    depth = 0
+    major_clauses = (
+        "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
+        "JOIN", "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "OUTER JOIN", "FULL JOIN"
+    )
 
     for line in lines:
         stripped = line.strip()
-
-        # CASE start
-        if re.match(r",?\s*CASE\b", stripped, re.IGNORECASE):
-            case_indent = re.match(r"^\s*", line).group(0)
-            case_stack.append({"indent": case_indent, "lines": [line]})
+        if not stripped:
+            result.append("")
             continue
 
-        # Inside CASE block
-        if case_stack:
-            current = case_stack[-1]
-
-            # END of CASE block
-            if re.match(r"END\b", stripped, re.IGNORECASE):
-                current["lines"].append(f"{current['indent']}    {stripped}")
-                cleaned.extend(current["lines"])
-                case_stack.pop()
-                continue
-
-            # Skip blank lines inside CASE
-            if not stripped:
-                continue
-
-            # Indent all lines inside CASE
-            current["lines"].append(f"{current['indent']}    {stripped}")
+        if stripped == ')':
+            depth = max(depth - 2, 0)
+            result.append((indent * depth) + stripped)
             continue
 
-        # Not in CASE
-        cleaned.append(line)
+        if stripped.endswith("("):
+            result.append((indent * depth) + stripped)
+            depth += 2
+            continue
+        
+        if any(stripped.upper().startswith(k) for k in major_clauses):
+            depth = max(depth - 1, 0)
+            result.append((indent * depth) + stripped)
+            depth += 1
+            continue
 
-    # Append any incomplete buffers (malformed CASE blocks)
-    for leftover in case_stack:
-        cleaned.extend(leftover["lines"])
+        if stripped.upper().startswith("THEN") or stripped.upper().startswith("ELSE"):
+            depth += 1
+            result.append((indent * depth) + stripped)
+            depth = max(depth - 1, 0)
+            continue
 
-    return "\n".join(cleaned)
+        if stripped.upper().endswith("CASE"):
+            result.append((indent * depth) + stripped)
+            depth += 1
+            continue
 
-def run_sqlfluff_lint(filepath: Path, audit_path: Path) -> dict:
-    result = subprocess.run([
-        "sqlfluff", "lint", str(filepath),
-        "--format", "json",
-        "--dialect", "snowflake",
-        "--config", str(SQLFLUFF_CONFIG),
-        "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
-    ], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-    try:
-        audit_path.mkdir(parents=True, exist_ok=True)
-        lint_output_path = audit_path / f"{filepath.stem}.pass1_{AUDIT_COUNTER['count']:02d}_lint.json"
-        lint_output_path.write_text(result.stdout, encoding='utf-8')
-        AUDIT_COUNTER["count"] += 1
-        return json.loads(result.stdout)
-    except json.JSONDecodeError:
-        debug_print("Failed to parse lint JSON.")
-        return {}
+        if stripped.upper().startswith("END"):
+            result.append((indent * depth) + stripped)
+            depth = max(depth - 1, 0)
+            continue
+        
+        result.append((indent * depth) + stripped)
 
-def run_sqlfluff_fix(filepath: Path):
-    subprocess.run([
-        "sqlfluff", "fix", str(filepath),
-        "--dialect", "snowflake",
-        "--config", str(SQLFLUFF_CONFIG),
-        "--exclude-rules", ",".join(PASS_ONE_EXCLUDE_RULES)
-    ])
+    
+    return "\n".join(result)
 
-def get_existing_pass1_version(sql: str) -> str:
-    match = re.search(rf"{re.escape(PASS1_MARKER_PREFIX)}(\d+(?:\.\d+)*)", sql)
-    return match.group(1) if match else None
+def restore_placeholders_pass1(sql: str, replacements: dict) -> str:
+    for placeholder, original in replacements.items():
+        sql = sql.replace(placeholder, original.strip())
+    return sql
 
-def version_to_tuple(version: str):
-    return tuple(map(int, version.split('.')))
+def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None) -> str:
+    flattened_sql, replacements = extract_placeholders(raw_sql)
+    if filename:
+        with open(filename.replace('.sql', '_1_flattened.sql'), 'w', encoding='utf-8') as f:
+            f.write(flattened_sql)
 
-def should_skip_formatting(sql: str, filepath: Path) -> bool:
-    existing_version = get_existing_pass1_version(sql)
-    if not existing_version:
-        return False
-    skip = version_to_tuple(existing_version) >= version_to_tuple(PASS1_VERSION)
-    if skip:
-        print(f"⏭️  Skipping {filepath.name}: already formatted with version {existing_version}")
-        SKIPPED_FILES.append(str(filepath))
-    return skip
+    whitespace_flattened_sql = flatten_sql_whitespace(flattened_sql)
+    if filename:
+        with open(filename.replace('.sql', '_2_whitespace_flattened.sql'), 'w', encoding='utf-8') as f:
+            f.write(whitespace_flattened_sql)
 
-def audit_copy(file_path: Path, stage: str, audit_path: Path):
-    audit_path.mkdir(parents=True, exist_ok=True)
-    count = AUDIT_COUNTER["count"]
-    new_name = f"{file_path.stem}.pass1_{count:02d}_{stage}{file_path.suffix}"
-    shutil.copy(file_path, audit_path / new_name)
-    AUDIT_COUNTER["count"] += 1
+    keyword_formatted_sql = format_sql_keywords_pass1(whitespace_flattened_sql)
+    if filename:
+        with open(filename.replace('.sql', '_3_keywords.sql'), 'w', encoding='utf-8') as f:
+            f.write(keyword_formatted_sql)
 
-def diff_summary(before: str, after: str):
-    diff = difflib.unified_diff(
-        before.splitlines(), after.splitlines(), lineterm=""
-    )
-    return "\n".join(diff)
+    comma_formatted_sql = format_sql_commas_pass1(keyword_formatted_sql)
+    if filename:
+        with open(filename.replace('.sql', '_4_commas.sql'), 'w', encoding='utf-8') as f:
+            f.write(comma_formatted_sql)
 
-def add_noqa_comments(sql: str, lint_results: dict, filepath: Path) -> str:
-    lines = sql.splitlines()
-    file_summary = defaultdict(list)
-    for file_result in lint_results:
-        for violation in file_result.get("violations", []):
-            if isinstance(violation.get("fixes", None), list) and len(violation["fixes"]) == 0:
-                line = violation.get("start_line_no") or violation.get("line_no")
-                code = violation["code"]
-                if line is not None and line - 1 < len(lines):
-                    match = re.search(r"-- noqa: (.+)", lines[line - 1])
-                    if match:
-                        existing_codes = set(code.strip() for code in match.group(1).split(","))
-                        existing_codes.add(code)
-                        new_comment = "-- noqa: " + ", ".join(sorted(existing_codes))
-                        lines[line - 1] = re.sub(r"-- noqa: .+", new_comment, lines[line - 1])
-                    else:
-                        lines[line - 1] += f"  -- noqa: {code}"
-                    file_summary[line].append(code)
-    if file_summary:
-        SUMMARY_REPORT.append({"file": str(filepath), "unfixables": dict(file_summary)})
-    return "\n".join(lines)
+    indented_sql = indent_sql_by_structure_pass1(comma_formatted_sql)
+    if filename:
+        with open(filename.replace('.sql', '_5_indents.sql'), 'w', encoding='utf-8') as f:
+            f.write(indented_sql)
 
-def remove_noqa_comments(sql: str) -> str:
-    return re.sub(r"\s*-- noqa: .+", "", sql)
+    restored_sql = restore_placeholders_pass1(indented_sql, replacements)
+    if filename:
+        with open(filename.replace('.sql', '_6_restored.sql'), 'w', encoding='utf-8') as f:
+            f.write(restored_sql)
 
-def write_summary_report():
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_path = AUDIT_ROOT / f"pass1_summary_{timestamp}.txt"
-    with report_path.open("w", encoding="utf-8") as f:
-        if SUMMARY_REPORT:
-            for entry in SUMMARY_REPORT:
-                f.write(f"File: {entry['file']}\n")
-                for line_no, codes in entry["unfixables"].items():
-                    code_list = ", ".join(codes)
-                    f.write(f"  Line {line_no}: {code_list}\n")
-                f.write("\n")
-        if SKIPPED_FILES:
-            f.write("Skipped Files (already formatted):\n")
-            for file in SKIPPED_FILES:
-                f.write(f"  {file}\n")
-            f.write("\n")
-    print(f"📝 Summary report written to: {report_path}")
+    gc.collect()  # Clear any lingering objects between runs
+    return restored_sql
 
-# ========== MAIN FUNCTION ==========
+def process_file_or_directory(path: str):
+    if os.path.isfile(path):
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        _ = preprocess_and_format_sql_pass1(content, filename=path)
+        print(f"Processed file: {path}")
 
-def pass1_format_sql_file(filepath: Path, mirror: bool):
-    print(f"\n--- Processing file: {filepath} ---")
-
-    original_sql = filepath.read_text(encoding='utf-8')
-    if should_skip_formatting(original_sql, filepath):
-        return
-
-    audit_path = make_audit_path(filepath, mirror)
-
-    staged_sql = add_newlines_for_keywords(original_sql)
-    staged_sql = add_newlines_before_commas(staged_sql)
-    staged_sql = "\n".join(line.rstrip() for line in staged_sql.splitlines())
-
-    temp_path = filepath.with_suffix('.tmp.sql')
-    temp_path.write_text(staged_sql, encoding='utf-8')
-    audit_copy(temp_path, "pre_format", audit_path)
-
-    lint_data = run_sqlfluff_lint(temp_path, audit_path)
-    if lint_data:
-        staged_sql = add_noqa_comments(staged_sql, lint_data, filepath)
-        temp_path.write_text(staged_sql, encoding='utf-8')
-
-    run_sqlfluff_fix(temp_path)
-
-    formatted_sql = temp_path.read_text(encoding='utf-8')
-    audit_copy(temp_path, "post_format", audit_path)
-    temp_path.unlink()
-
-    flat_before = flatten_sql(original_sql)
-    flat_after = flatten_sql(remove_noqa_comments(formatted_sql))
-
-    if flat_before != flat_after:
-        print("❌ Unexpected structural changes. Review required.")
-        diff = diff_summary(original_sql, formatted_sql)
-        diff_file = audit_path / f"{filepath.stem}.pass1_diff.txt"
-        diff_file.write_text(diff, encoding='utf-8')
-
-        flat_compare_file = audit_path / f"{filepath.stem}.pass1_flat_compare.txt"
-        flat_compare_file.write_text(f"{flat_before}\n{flat_after}\n", encoding='utf-8')
-
-        print(f"🔍 Diff written to: {diff_file.name}")
-        print(f"🔍 Flattened comparison written to: {flat_compare_file.name}")
-        return
-
-    # Clean up CASE formatting
-    formatted_sql = clean_case_blocks(formatted_sql)
-
-    final_output = f"{PASS1_MARKER_PREFIX}{PASS1_VERSION}\n\n{formatted_sql}"
-    filepath.write_text(final_output, encoding='utf-8')
-    print("✅ Formatted successfully.")
-
-# ========== ENTRY POINT ==========
-
-def main():
-    parser = argparse.ArgumentParser(description="SQLFluff Pass 1 Formatter")
-    parser.add_argument("--path", type=str, required=True, help="Path to SQL file or directory")
-    parser.add_argument("--debug", action="store_true", help="Enable debug output")
-    parser.add_argument("--flat", action="store_true", help="Do not mirror folder structure in audit output")
-    args = parser.parse_args()
-
-    global DEBUG
-    DEBUG = args.debug
-
-    path = Path(args.path)
-    mirror = not args.flat
-
-    sql_files = []
-    if path.is_file() and path.suffix.lower() == ".sql":
-        sql_files = [path]
-    elif path.is_dir():
-        sql_files = list(path.rglob("*.sql"))
+    elif os.path.isdir(path):
+        for root, _, files in os.walk(path):
+            for file in files:
+                if file.endswith(".sql"):
+                    full_path = os.path.join(root, file)
+                    with open(full_path, 'r', encoding='utf-8') as f:
+                        content = f.read()
+                    _ = preprocess_and_format_sql_pass1(content, filename=full_path)
+                    print(f"Processed file: {full_path}")
     else:
-        print("❌ Invalid path. Must be .sql file or directory.")
-        return
-
-    for file in sql_files:
-        pass1_format_sql_file(file, mirror)
-
-    write_summary_report()
-
-if __name__ == "__main__":
-    main()
+        print(f"Path does not exist: {path}")
