@@ -1,9 +1,6 @@
 import re
 import os
-import sqlparse
 import gc
-from sqlparse.sql import TokenList, Identifier, IdentifierList, Parenthesis
-from sqlparse.tokens import Keyword, DML, Punctuation
 
 def extract_placeholders(sql: str):
     patterns = [
@@ -151,45 +148,45 @@ def restore_placeholders_pass1(sql: str, replacements: dict) -> str:
         sql = sql.replace(placeholder, original.strip())
     return sql
 
-def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None) -> str:
+def preprocess_and_format_sql_pass1(raw_sql: str, filename: str = None, debug: bool = False) -> str:
     flattened_sql, replacements = extract_placeholders(raw_sql)
-    if filename:
+    if filename and debug:
         with open(filename.replace('.sql', '_1_flattened.sql'), 'w', encoding='utf-8') as f:
             f.write(flattened_sql)
 
     whitespace_flattened_sql = flatten_sql_whitespace(flattened_sql)
-    if filename:
+    if filename and debug:
         with open(filename.replace('.sql', '_2_whitespace_flattened.sql'), 'w', encoding='utf-8') as f:
             f.write(whitespace_flattened_sql)
 
     keyword_formatted_sql = format_sql_keywords_pass1(whitespace_flattened_sql)
-    if filename:
+    if filename and debug:
         with open(filename.replace('.sql', '_3_keywords.sql'), 'w', encoding='utf-8') as f:
             f.write(keyword_formatted_sql)
 
     comma_formatted_sql = format_sql_commas_pass1(keyword_formatted_sql)
-    if filename:
+    if filename and debug:
         with open(filename.replace('.sql', '_4_commas.sql'), 'w', encoding='utf-8') as f:
             f.write(comma_formatted_sql)
 
     indented_sql = indent_sql_by_structure_pass1(comma_formatted_sql)
-    if filename:
+    if filename and debug:
         with open(filename.replace('.sql', '_5_indents.sql'), 'w', encoding='utf-8') as f:
             f.write(indented_sql)
 
     restored_sql = restore_placeholders_pass1(indented_sql, replacements)
-    if filename:
+    if filename and debug:
         with open(filename.replace('.sql', '_6_restored.sql'), 'w', encoding='utf-8') as f:
             f.write(restored_sql)
 
     gc.collect()  # Clear any lingering objects between runs
     return restored_sql
 
-def process_file_or_directory(path: str):
+def process_file_or_directory(path: str, debug: bool = False):
     if os.path.isfile(path):
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
-        _ = preprocess_and_format_sql_pass1(content, filename=path)
+        _ = preprocess_and_format_sql_pass1(content, filename=path, debug=debug)
         print(f"Processed file: {path}")
 
     elif os.path.isdir(path):
@@ -199,7 +196,20 @@ def process_file_or_directory(path: str):
                     full_path = os.path.join(root, file)
                     with open(full_path, 'r', encoding='utf-8') as f:
                         content = f.read()
-                    _ = preprocess_and_format_sql_pass1(content, filename=full_path)
+                    _ = preprocess_and_format_sql_pass1(content, filename=full_path, debug=debug)
                     print(f"Processed file: {full_path}")
     else:
         print(f"Path does not exist: {path}")
+
+
+import argparse
+
+def main():
+    parser = argparse.ArgumentParser(description="Format SQL files with structured indentation.")
+    parser.add_argument("path", help="Path to a .sql file or directory containing .sql files")
+    parser.add_argument("--debug", action="store_true", help="Enable debug mode with intermediate file writes")
+    args = parser.parse_args()
+    process_file_or_directory(args.path, debug=args.debug)
+
+if __name__ == "__main__":
+    main()
