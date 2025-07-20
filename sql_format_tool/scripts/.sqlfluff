@@ -1,22 +1,14 @@
 [sqlfluff]
 
 
-# Supported dialects https://docs.sqlfluff.com/en/stable/perma/dialects.html
-# Or run 'sqlfluff dialects'
 dialect = snowflake
 
-# One of [raw|jinja|python|placeholder]
-templater = jinja
+templater = dbt
+
+[sqlfluff:templater:dbt]
+project_dir = dbt
 
 
-# rules = AL01, AL02, AL03, AL04, AL05
-
-
-# Comma separated list of rules to exclude, or None
-# See https://docs.sqlfluff.com/en/stable/perma/rule_disabling.html
-# AM04 (ambiguous.column_count) and ST06 (structure.column_order) are
-# two of the more controversial rules included to illustrate usage.
-exclude_rules = ambiguous.column_count, structure.column_order
 
 # The standard max_line_length is 80 in line with the convention of
 # other tools and several style guides. Many projects however prefer

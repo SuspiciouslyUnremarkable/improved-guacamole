@@ -1,10 +1,19 @@
 # Get the repo name from the current directory
-$repoName = Split-Path -Leaf (Get-Location)
+$repoName = "sql_format_tool"
 $venvPath = Join-Path -Path "." -ChildPath "venv\$repoName"
+
+# Get PYTHON_PATH from the environment variables
+$pythonPath = $env:PYTHON_PATH
+if (-not $pythonPath) {
+    Write-Host "PYTHON_PATH environment variable is not set. Please add it to your .vscode/settings.json file. as:"
+    Write-Host '  "PYTHON_PATH": "C:/Path/To/Python/python.exe"'
+    exit 1
+}
+
 
 # Create the venv directory if it doesn't exist
 if (-not (Test-Path -Path $venvPath)) {
-    python -m venv $venvPath
+    & $pythonPath -m venv $venvPath
     Write-Host "Virtual environment created at $venvPath"
 } else {
     Write-Host "Virtual environment already exists at $venvPath"
@@ -20,7 +29,7 @@ if (Test-Path -Path $activateScript) {
 }
 
 # Install requirements
-$requirementsFile = Join-Path -Path (Get-Location) -ChildPath "requirements.txt"
+$requirementsFile = "sql_format_tool\scripts\requirements.txt"
 if (Test-Path -Path $requirementsFile) {    
     pip install -r $requirementsFile
     Write-Host "Requirements installed from $requirementsFile"
