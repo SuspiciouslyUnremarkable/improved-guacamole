@@ -96,19 +96,24 @@ def ensure_comment_newlines(sql: str) -> str:
     return sql
 
 
-def newline_around_non_function_closing_parentheses(sql: str, function_blocks) -> str:
-    """Add newlines around ) unless it's inside a function."""
+def newline_around_non_function_closing_parentheses(sql: str) -> str:
+    """Add newlines around ) unless it's inside a function call."""
+    function_blocks, _ = find_sql_blocks(sql)
+
+    def in_function_block(idx):
+        return any(start < idx < end for start, end in function_blocks)
+
     result = []
     for i, ch in enumerate(sql):
-        if ch == ')' and not in_block(i, function_blocks):
-            # Ensure newline before and after
+        if ch == ')' and not in_function_block(i):
             if result and result[-1] != '\n':
                 result.append('\n')
             result.append(')')
             result.append('\n')
         else:
             result.append(ch)
-    return "".join(result)
+    return ''.join(result)
+
 
 
 
@@ -203,14 +208,14 @@ def format_sql_keywords(sql: str) -> str:
         return ("\n\n" if kw in major_clauses else "\n") + kw
     return re.sub(pattern, insert_newline, sql, flags=re.IGNORECASE)
 
-def format_sql_commas(sql: str, function_blocks, select_blocks) -> str:
-    """Move commas in SELECT column lists to new lines, skip function commas, normalize spaces."""
+def format_sql_commas(sql: str) -> str:
+    """Move commas in SELECT column lists to new lines, skipping commas inside functions."""
+    function_blocks, select_blocks = find_sql_blocks(sql)
     result = []
     buffer = ""
     i = 0
 
     while i < len(sql):
-        # Keep SELECT keyword intact
         if sql[i:i + 6].lower() == 'select':
             buffer += sql[i:i + 6]
             i += 6
@@ -218,16 +223,15 @@ def format_sql_commas(sql: str, function_blocks, select_blocks) -> str:
 
         ch = sql[i]
         if ch == ',':
-            # Normalize spacing after commas everywhere
             next_char = sql[i + 1] if i + 1 < len(sql) else ''
             if in_block(i, select_blocks) and not in_block(i, function_blocks):
-                # Break columns onto new line
+                # Break SELECT column commas onto a new line
                 stripped_buffer = buffer.rstrip()
                 result.append(stripped_buffer)
                 result.append("\n, ")
                 buffer = ""
             else:
-                # Keep comma inline, but ensure one space
+                # Normalize space after commas everywhere
                 stripped_buffer = buffer.rstrip()
                 result.append(stripped_buffer + ",")
                 if next_char != ' ':
@@ -242,7 +246,6 @@ def format_sql_commas(sql: str, function_blocks, select_blocks) -> str:
 
     formatted = "".join(result).strip()
     return re.sub(r'\n{3,}', '\n\n', formatted)
-
 
 
 def indent_sql(sql: str, indent: str = "    ") -> str:
@@ -369,9 +372,6 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) ->
     flattened_sql, placeholders = extract_placeholders(raw_sql)
     debug_write("placeholders", flattened_sql)
 
-    # Stage 2: Compute blocks once
-    function_blocks, select_blocks = find_sql_blocks(flattened_sql)
-
     formatted = flatten_sql_whitespace(flattened_sql)
     debug_write("flatten", formatted)
 
@@ -381,13 +381,13 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) ->
     formatted = format_sql_keywords(formatted)
     debug_write("keywords", formatted)
 
-    formatted = format_sql_commas(formatted, function_blocks, select_blocks)
+    formatted = format_sql_commas(formatted)
     debug_write("commas", formatted)
 
     formatted = newline_after_non_function_parentheses(formatted)
     debug_write("after_open_paren", formatted)
 
-    formatted = newline_around_non_function_closing_parentheses(formatted, function_blocks)
+    formatted = newline_around_non_function_closing_parentheses(formatted)
     debug_write("around_close_paren", formatted)
 
     formatted = newline_around_cte_closing_parentheses(formatted)
