@@ -12,11 +12,12 @@ Includes:
 import re
 import argparse
 from pathlib import Path
+from typing import Tuple, Dict
 
 PASS1_VERSION = 1
 PASS1_COMMENT = f"-- sqlfluff-pass1-version: {PASS1_VERSION}"
 AUDIT_ROOT = Path("sql_format_tool/audit_folder")
-DBT_PROJECT_DIR = Path("../dbt").resolve()
+DBT_PROJECT_DIR = Path("dbt").resolve()
 
 SNOWFLAKE_FUNCTIONS = {
     "ARRAY_AGG","AVG","CAST","COALESCE","COUNT","DATEADD","DATEDIFF","FIRST_VALUE","LAST_VALUE","LISTAGG","MAX","MIN","ROW_NUMBER",
@@ -26,6 +27,16 @@ SNOWFLAKE_FUNCTIONS = {
     "LOWER","INITCAP","REPLACE","REVERSE","CONCAT","CONCAT_WS","LPAD","RPAD","LEFT","RIGHT","POSITION","CHARINDEX","ASCII","CHR","TO_CHAR",
     "TO_NUMBER","TO_VARCHAR","TO_DECIMAL","TO_DOUBLE","TO_BOOLEAN","TO_VARIANT","TO_OBJECT","TO_ARRAY","TRY_CAST","TRY_TO_DATE","TRY_TO_TIMESTAMP"
 }
+
+PLACEHOLDER_PATTERNS = [
+    (r"({{.*?}})", "JINJA"),
+    (r"({%-?.*?-%})", "JINJA"),
+    (r"({#.*?#})", "JINJA_COMMENT"),
+    (r"--[^\n]*", "SQL_COMMENT"),
+    (r"/\*.*?\*/", "SQL_BLOCK_COMMENT"),
+    (r"'(?:''|[^'])*'", "SINGLE_QUOTED_STRING"),
+    (r'"(?:[^"]|"")*"', "DOUBLE_QUOTED_STRING"),
+]
 
 def has_pass1_comment(sql: str) -> bool:
     match = re.search(r"(?im)^\s*--\s*sqlfluff-pass1-version:\s*(\d+)", sql)
@@ -47,6 +58,14 @@ def newline_after_non_function_parentheses(sql: str) -> str:
             result.append("\n")
     return "".join(result)
 
+def ensure_comment_newlines(sql: str) -> str:
+    """Ensure each '--' comment starts on a new line, even when multiple comments are adjacent."""
+    # Replace any occurrence of '--' that is not already at the start of a line with a newline before it
+    # Also handle multiple consecutive comments by ensuring only one newline is added
+    sql = re.sub(r'(?<!\n)--', '\n--', sql)
+    return sql
+
+
 def newline_around_non_function_closing_parentheses(sql: str) -> str:
     result = []
     for i, ch in enumerate(sql):
@@ -58,34 +77,79 @@ def newline_around_non_function_closing_parentheses(sql: str) -> str:
             result.append(ch)
     return "".join(result)
 
-def extract_placeholders(sql: str):
-    patterns = [
-        (r"({{.*?}})", "JINJA"),
-        (r"({%-?.*?-%})", "JINJA"),
-        (r"({#.*?#})", "JINJA_COMMENT"),
-        (r"--[^\n]*", "SQL_COMMENT"),
-        (r"/\\*.*?\\*/", "SQL_BLOCK_COMMENT"),
-        (r"'(?:''|[^'])*'", "SINGLE_QUOTED_STRING"),
-        (r'\"(?:[^\"]|\"\")*\"', "DOUBLE_QUOTED_STRING")
-    ]
+def newline_around_cte_closing_parentheses(sql: str) -> str:
+    """Ensure there is an extra newline before and after the closing parenthesis of a CTE."""
+    result = []
+    tokens = sql.splitlines(keepends=True)
+    depth = 0
+    in_cte = False
 
+    for line in tokens:
+        stripped = line.strip().upper()
+        # Detect CTE start: WITH name AS (  or  , name AS (
+        if re.match(r'^(WITH|,)\s+\w+\s+AS\s*\($', stripped, re.IGNORECASE):
+            in_cte = True
+            depth = 1
+            result.append(line)
+            continue
+        if in_cte:
+            depth += stripped.count('(')
+            depth -= stripped.count(')')
+            if depth == 0 and ')' in stripped:
+                # Insert extra newline before and after closing parenthesis of CTE
+                if not result[-1].endswith('\n'):
+                    result[-1] = result[-1] + '\n'
+                result.append('\n)\n\n')
+                in_cte = False
+                continue
+            result.append(line)
+        else:
+            result.append(line)
+    return ''.join(result)
+
+
+def normalize_extra_newlines(sql: str) -> str:
+    """Replace any sequence of 3 or more newlines with exactly 2 newlines."""
+    return re.sub(r'\n{3,}', '\n\n', sql)
+
+
+
+def extract_placeholders(sql: str) -> Tuple[str, Dict[str, str]]:
+    """Replace sensitive content with placeholders using positional matching."""
     replacements = {}
-    counter = 1
-    for pattern, label in patterns:
-        for match in re.findall(pattern, sql, re.DOTALL):
-            key = f"__PLACEHOLDER_{label}_{counter:04d}__"
-            replacements[key] = match
-            sql = sql.replace(match, key)
-            counter += 1
-    return sql, replacements
+    placeholder_counter = 1
 
-def restore_placeholders(sql: str, replacements: dict) -> str:
-    for placeholder, original in replacements.items():
-        sql = sql.replace(placeholder, original)
+    # Build a combined regex for all placeholder patterns
+    combined_pattern = "|".join(f"({p})" for p, _ in PLACEHOLDER_PATTERNS)
+    regex = re.compile(combined_pattern, re.DOTALL)
+
+    def replace_match(match):
+        nonlocal placeholder_counter
+        matched_text = match.group(0)
+        # Use the pattern label based on which group matched
+        for i, (_, label) in enumerate(PLACEHOLDER_PATTERNS, start=1):
+            if match.group(i):
+                placeholder_label = label
+                break
+        key = f"__PLACEHOLDER_{placeholder_label}_{placeholder_counter:04d}__"
+        replacements[key] = matched_text
+        placeholder_counter += 1
+        return key
+
+    sql_with_placeholders = regex.sub(replace_match, sql)
+    return sql_with_placeholders, replacements
+
+
+def restore_placeholders(sql: str, replacements: Dict[str, str]) -> str:
+    """Restore placeholders back to their original content."""
+    for key, original in replacements.items():
+        sql = sql.replace(key, original)
     return sql
 
 def flatten_sql_whitespace(sql: str, remove_all_spaces=False) -> str:
-    sql = re.sub(r"\\s+", " ", sql.replace("\n", " ")).strip()
+    sql = re.sub(r"\\s+", " ", sql)
+    sql = sql.replace("\n", " ").strip()
+    sql = re.sub(r" {2,}", " ", sql)  # Replace two or more spaces with a single space
     return sql.replace(" ", "") if remove_all_spaces else sql
 
 def format_sql_keywords(sql: str) -> str:
@@ -100,6 +164,7 @@ def format_sql_keywords(sql: str) -> str:
     return re.sub(pattern, insert_newline, sql, flags=re.IGNORECASE)
 
 def format_sql_commas(sql: str) -> str:
+    """Move commas in SELECT blocks to new lines, ensuring only one space after comma."""
     result, stack, select_blocks = [], [], []
     sql = "(" + sql + ")"
     for i, ch in enumerate(sql):
@@ -120,11 +185,11 @@ def format_sql_commas(sql: str) -> str:
         ch = sql[i]
         if ch == ',' and in_select_block(i):
             stripped_buffer = buffer.rstrip()
-            if not stripped_buffer.endswith('\n'):
-                result.append(stripped_buffer)
-                result.append("\n, ")
-            else:
-                result.append(stripped_buffer + ", ")
+            result.append(stripped_buffer)
+            # Add comma and one space only if next char is not already space
+            next_char = sql[i + 1] if i + 1 < len(sql) else ''
+            space = '' if next_char == ' ' else ' '
+            result.append("\n," + space)
             buffer = ""
         else:
             buffer += ch
@@ -132,88 +197,193 @@ def format_sql_commas(sql: str) -> str:
     if buffer.strip():
         result.append(buffer.strip())
     formatted = "".join(result).strip()
-    return re.sub(r'\\n{3,}', '\\n\\n', formatted[1:-1] if formatted.startswith('(') else formatted)
+    return re.sub(r'\n{3,}', '\n\n', formatted[1:-1] if formatted.startswith('(') else formatted)
 
 def indent_sql(sql: str, indent: str = "    ") -> str:
-    lines, depth = sql.splitlines(), 0
-    major_clauses = ("SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","JOIN","LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN")
+    """Indent SQL based on structure. 
+    - `)` must be on its own line.
+    - Lines ending with `(` increase depth.
+    - If a keyword has been seen in the current block, 
+      indent other lines one level deeper.
+    """
+    lines = sql.splitlines()
+    depth = 0
+    keyword_count = 0
+
+    # Define major clauses that should reset depth
+    major_clauses = (
+        "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY",
+        "HAVING", "JOIN", "LEFT JOIN", "RIGHT JOIN",
+        "INNER JOIN", "OUTER JOIN", "FULL JOIN"
+    )
+
     result = []
+
     for line in lines:
         stripped = line.strip()
+
         if not stripped:
             result.append("")
             continue
-        if stripped == ')':
+
+        # Closing parenthesis on its own line decreases depth
+        if stripped == ")":
             depth = max(depth - 1, 0)
-            result.append(indent * depth + stripped)
-            continue
-        if stripped == '(':
+            result.append(indent * depth + ")")
+            keyword_count = 0  # reset for new block
+
+        # Opening parenthesis when it ends the line increases depth
+        elif stripped.endswith("("):
             result.append(indent * depth + stripped)
             depth += 1
-            continue
-        if any(stripped.upper().startswith(k) for k in major_clauses):
-            depth = max(depth - 1, 0)
+            keyword_count = 0  # reset keywords when entering new block
+
+        # Begins with SELECT (start of a block)
+        elif stripped.upper().startswith("SELECT"):
+            result.append(indent * depth + stripped)
+            keyword_count += 1
+
+        # Major clauses at start of line
+        elif any(stripped.upper().startswith(k) for k in major_clauses):
+            result.append(indent * depth + stripped)
+            keyword_count += 1
+
+        # CASE / WHEN / THEN / ELSE / END blocks
+        elif stripped.upper().endswith("CASE"):
             result.append(indent * depth + stripped)
             depth += 1
-            continue
-        if stripped.upper().startswith(('THEN','ELSE')):
+        elif stripped.upper().startswith(("THEN", "ELSE")):
             depth += 1
             result.append(indent * depth + stripped)
             depth = max(depth - 1, 0)
-            continue
-        if stripped.upper().endswith('CASE'):
-            result.append(indent * depth + stripped)
-            depth += 1
-            continue
-        if stripped.upper().startswith('END'):
+        elif stripped.upper().startswith("END"):
             result.append(indent * depth + stripped)
             depth = max(depth - 1, 0)
-            continue
-        result.append(indent * depth + stripped)
+
+        # Default indentation (uses extra indent if keywords seen)
+        else:
+            extra_indent = 1 if keyword_count > 0 else 0
+            result.append(indent * (depth + extra_indent) + stripped)
+
     return "\n".join(result)
 
-def write_audit_files(filename: Path, pre_sql: str, post_sql: str, diff_detected: bool, mirror_audit: bool):
-    rel_path = filename.relative_to(DBT_PROJECT_DIR) if mirror_audit else filename.name
+def write_audit_files(filename: Path, pre_sql: str, post_sql: str, post_sql_with_comment: str,
+                      diff_detected: bool, mirror_audit: bool, last_stage_num: int = 0):
+    """Write pre/post/diff audit files with numbering aligned to debug output.
+       - Diff uses raw pre_sql vs restored (no comment)
+       - Post-format uses restored_with_comment
+    """
+    rel_path = filename.relative_to(DBT_PROJECT_DIR) if mirror_audit else Path(filename.name)
     audit_base = AUDIT_ROOT / (rel_path.parent if mirror_audit else Path()) / filename.stem
     audit_base.mkdir(parents=True, exist_ok=True)
-    (audit_base / f"{filename.stem}_pass1_01_pre_format.sql").write_text(pre_sql, encoding="utf-8")
-    (audit_base / f"{filename.stem}_pass1_03_post_format.sql").write_text(post_sql, encoding="utf-8")
+
+    # 00 = pre-format
+    (audit_base / f"{filename.stem}_00_pre_format.sql").write_text(pre_sql, encoding="utf-8")
+
+    # Diff (only if difference found) → raw vs restored (no comment)
     if diff_detected:
-        diff_path = audit_base / f"{filename.stem}_pass1_02_diff.txt"
-        diff_path.write_text(flatten_sql_whitespace(pre_sql, True) + "\n" + flatten_sql_whitespace(post_sql, True), encoding="utf-8")
+        diff_path = audit_base / f"{filename.stem}_{last_stage_num + 1:02d}_diff.txt"
+        diff_path.write_text(
+            flatten_sql_whitespace(pre_sql, True) + "\n" +
+            flatten_sql_whitespace(post_sql, True),
+            encoding="utf-8"
+        )
         print(f"❌ Structural/textual change detected in {filename}, diff saved to {diff_path}")
 
-def process_sql_file(filename: Path, mirror_audit: bool) -> str:
+    # Post-format = restored_with_comment
+    (audit_base / f"{filename.stem}_{last_stage_num + 2:02d}_post_format.sql").write_text(
+        post_sql_with_comment, encoding="utf-8"
+    )
+
+def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) -> str:
     raw_sql = filename.read_text(encoding="utf-8")
     if has_pass1_comment(raw_sql):
         print(f"ℹ️ {filename} already formatted, skipping.")
         return "already_formatted"
-    flattened_sql, placeholders = extract_placeholders(raw_sql)
-    formatted = newline_after_non_function_parentheses(flatten_sql_whitespace(flattened_sql))
-    formatted = newline_around_non_function_closing_parentheses(formatted)
-    formatted = format_sql_keywords(formatted)
-    formatted = format_sql_commas(formatted)
-    formatted = indent_sql(formatted)
-    restored = restore_placeholders(formatted, placeholders)
-    pre_flat = flatten_sql_whitespace(raw_sql, True)
-    post_flat = flatten_sql_whitespace(restored, True)
-    diff_detected = pre_flat != post_flat
-    restored_with_comment = insert_pass1_comment(restored)
-    write_audit_files(filename, raw_sql, restored, diff_detected, mirror_audit)
-    if diff_detected:
-        return "diff_detected"
-    filename.write_text(restored_with_comment, encoding="utf-8")
-    print(f"✅ Updated {filename} with formatted SQL.")
-    return "formatted"
 
-def process_path(path: Path, mirror_audit: bool):
+    # Build mirrored path
+    rel_path = filename.relative_to(DBT_PROJECT_DIR) if mirror_audit else Path(filename.name)
+    audit_base = AUDIT_ROOT / (rel_path.parent if mirror_audit else Path()) / filename.stem
+    audit_base.mkdir(parents=True, exist_ok=True)
+
+    stage_counter = 1
+
+    def debug_write(stage_name: str, content: str):
+        nonlocal stage_counter
+        if debug:
+            stage_path = audit_base / f"{filename.stem}_{stage_counter:02d}_{stage_name}.sql"
+            stage_path.write_text(content, encoding="utf-8")
+            stage_counter += 1
+
+    # Formatting stages
+    flattened_sql, placeholders = extract_placeholders(raw_sql)
+    debug_write("placeholders", flattened_sql)
+
+    formatted = flatten_sql_whitespace(flattened_sql)
+    debug_write("flatten", formatted)
+
+    formatted = format_sql_keywords(formatted)
+    debug_write("keywords", formatted)
+
+    formatted = format_sql_commas(formatted)
+    debug_write("commas", formatted)
+
+    formatted = newline_after_non_function_parentheses(formatted)
+    debug_write("after_open_paren", formatted)
+
+    formatted = newline_around_non_function_closing_parentheses(formatted)
+    debug_write("around_close_paren", formatted)
+
+    formatted = newline_around_cte_closing_parentheses(formatted)
+    debug_write("cte_close_paren", formatted)
+
+    formatted = normalize_extra_newlines(formatted)
+    debug_write("normalized_newlines", formatted)
+
+    formatted = indent_sql(formatted)
+    debug_write("indentation", formatted)
+
+    formatted = restore_placeholders(formatted, placeholders)
+    debug_write("placeholders_restored", formatted)
+    
+    restored = ensure_comment_newlines(formatted)
+    debug_write("comment_newlines", restored)
+
+    restored_with_comment = insert_pass1_comment(restored)
+    debug_write("with_version_comment", restored_with_comment)
+
+    # Diff check
+    pre_flat = flatten_sql_whitespace(raw_sql, True).lower()
+    post_flat = flatten_sql_whitespace(restored, True).lower()
+    diff_detected = pre_flat != post_flat
+
+    # Always write main audit files, passing stage count
+    write_audit_files(
+    filename,
+    raw_sql,                # pre_sql
+    restored,               # post_sql (no comment) for diff
+    restored_with_comment,  # post_sql_with_comment for final audit output
+    diff_detected,
+    mirror_audit,
+    last_stage_num=stage_counter
+)
+    if not debug:
+        filename.write_text(restored_with_comment, encoding="utf-8")
+        print(f"✅ Updated {filename} with formatted SQL.")
+    else:
+        print(f"🔍 Debug mode: {filename} not replaced, see audit folder for steps.")
+
+    return "diff_detected" if diff_detected else "formatted"
+    
+
+def process_path(path: Path, mirror_audit: bool, debug: bool = False):
     processed, skipped, diffs = [], [], []
     if path.is_file() and path.suffix == ".sql":
-        status = process_sql_file(path, mirror_audit)
+        status = process_sql_file(path, mirror_audit, debug)
         (processed if status == "formatted" else skipped if status == "already_formatted" else diffs).append(path)
     else:
         for file in path.rglob("*.sql"):
-            status = process_sql_file(file, mirror_audit)
+            status = process_sql_file(file, mirror_audit, debug)
             (processed if status == "formatted" else skipped if status == "already_formatted" else diffs).append(file)
     print("\n=== Pass 1 Summary ===")
     print(f"Formatted files: {len(processed)}")
@@ -234,12 +404,22 @@ def main():
     parser = argparse.ArgumentParser(description="Format SQL files for Pass 1")
     parser.add_argument("path", help="Path to .sql file or directory")
     parser.add_argument("--no-mirror-audit", action="store_true", help="Disable folder hierarchy mirroring in audit")
+    parser.add_argument("--debug", action="store_true", help="Output intermediate audit files for each formatting step")
     args = parser.parse_args()
+
     path = Path(args.path).resolve()
     mirror_audit = not args.no_mirror_audit
+    debug = args.debug
+
     if not path.exists():
         print(f"Path does not exist: {path}")
         return
-    process_path(path, mirror_audit)
+    if path.is_file() and path.suffix == ".sql":
+        process_sql_file(path, mirror_audit, debug)
+    else:
+        for file in path.rglob("*.sql"):
+            process_sql_file(file, mirror_audit, debug)
+
+
 if __name__ == "__main__":
     main()
