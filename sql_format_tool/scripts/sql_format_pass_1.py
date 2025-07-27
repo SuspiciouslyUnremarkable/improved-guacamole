@@ -199,7 +199,7 @@ def process_sql_file(filename: Path, mirror_audit: bool) -> str:
     post_flat = flatten_sql_whitespace(restored, True)
     diff_detected = pre_flat != post_flat
     restored_with_comment = insert_pass1_comment(restored)
-    write_audit_files(filename, raw_sql, restored_with_comment, diff_detected, mirror_audit)
+    write_audit_files(filename, raw_sql, restored, diff_detected, mirror_audit)
     if diff_detected:
         return "diff_detected"
     filename.write_text(restored_with_comment, encoding="utf-8")
