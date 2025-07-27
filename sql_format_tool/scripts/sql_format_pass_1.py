@@ -73,8 +73,9 @@ def find_sql_blocks(sql: str):
 
     return function_blocks, select_blocks
 
-def in_block(idx, blocks):
-    return any(start < idx < end for start, end in blocks)
+def in_block(idx: int, blocks: list[tuple[int, int]]) -> bool:
+    """Return True if index is inside or at the boundaries of any block."""
+    return any(start <= idx <= end for start, end in blocks)
 
 def is_function_call(sql: str, idx: int) -> bool:
     match = re.search(r"([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s*$", sql[:idx])
@@ -83,18 +84,12 @@ def is_function_call(sql: str, idx: int) -> bool:
 def newline_after_non_function_parentheses(sql: str) -> str:
     """Add a newline after '(' unless it is part of a function call."""
     function_blocks, _ = find_sql_blocks(sql)
-
-    def in_function_block(idx):
-        return any(start < idx < end for start, end in function_blocks)
-
     result = []
     for i, ch in enumerate(sql):
         result.append(ch)
-        # Only add newline if this '(' is not part of a function call
-        if ch == '(' and not in_function_block(i):
+        if ch == '(' and not in_block(i, function_blocks):
             result.append("\n")
     return "".join(result)
-
 
 def ensure_comment_newlines(sql: str) -> str:
     """Ensure each '--' comment starts on a new line, even when multiple comments are adjacent."""
@@ -105,23 +100,19 @@ def ensure_comment_newlines(sql: str) -> str:
 
 
 def newline_around_non_function_closing_parentheses(sql: str) -> str:
-    """Add newlines around ) unless it's inside a function call."""
+    """Add newlines around ')' unless it's inside a function call."""
     function_blocks, _ = find_sql_blocks(sql)
-
-    def in_function_block(idx):
-        return any(start < idx < end for start, end in function_blocks)
-
     result = []
     for i, ch in enumerate(sql):
-        if ch == ')' and not in_function_block(i):
+        if ch == ')' and not in_block(i, function_blocks):
+            # Ensure newline before and after
             if result and result[-1] != '\n':
                 result.append('\n')
             result.append(')')
             result.append('\n')
         else:
             result.append(ch)
-    return ''.join(result)
-
+    return "".join(result)
 
 
 
@@ -217,7 +208,8 @@ def format_sql_keywords(sql: str) -> str:
     return re.sub(pattern, insert_newline, sql, flags=re.IGNORECASE)
 
 def format_sql_commas(sql: str) -> str:
-    """Move commas in SELECT column lists to new lines, skipping commas inside functions."""
+    """Move commas in SELECT column lists to new lines and normalize spacing,
+    skipping commas inside function calls."""
     function_blocks, select_blocks = find_sql_blocks(sql)
     result = []
     buffer = ""
@@ -233,13 +225,11 @@ def format_sql_commas(sql: str) -> str:
         if ch == ',':
             next_char = sql[i + 1] if i + 1 < len(sql) else ''
             if in_block(i, select_blocks) and not in_block(i, function_blocks):
-                # Break SELECT column commas onto a new line
                 stripped_buffer = buffer.rstrip()
                 result.append(stripped_buffer)
                 result.append("\n, ")
                 buffer = ""
             else:
-                # Normalize space after commas everywhere
                 stripped_buffer = buffer.rstrip()
                 result.append(stripped_buffer + ",")
                 if next_char != ' ':
@@ -254,6 +244,7 @@ def format_sql_commas(sql: str) -> str:
 
     formatted = "".join(result).strip()
     return re.sub(r'\n{3,}', '\n\n', formatted)
+
 
 
 def indent_sql(sql: str, indent: str = "    ") -> str:
