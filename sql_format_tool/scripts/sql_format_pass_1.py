@@ -91,7 +91,9 @@ def flatten_sql_whitespace(sql: str, remove_all_spaces=False) -> str:
 def format_sql_keywords(sql: str) -> str:
     keywords = ["LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN","SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","JOIN","UNION","LIMIT","ON","AND","OR","WITH","WHEN","THEN","ELSE","END"]
     major_clauses = {"SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN","JOIN"}
-    pattern = r"(?<!\\w)(?P<kw>{})(?!\\w)".format("|".join(re.escape(k) for k in keywords))
+    # Avoid matching inside identifiers (underscores allowed in identifiers)
+    pattern = r"(?<![A-Za-z0-9_])(?P<kw>{})(?![A-Za-z0-9_])".format("|".join(re.escape(k) for k in keywords))
+
     def insert_newline(match):
         kw = match.group("kw").upper()
         return ("\n\n" if kw in major_clauses else "\n") + kw
