@@ -3,3 +3,4 @@ sqlfluff-templater-dbt
 dbt-snowflake
 sqlparse
 dbt-sqlite
+argparse
