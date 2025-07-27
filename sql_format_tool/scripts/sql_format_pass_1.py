@@ -81,12 +81,20 @@ def is_function_call(sql: str, idx: int) -> bool:
     return bool(match and match.group(1).split(".")[-1].upper() in SNOWFLAKE_FUNCTIONS)
 
 def newline_after_non_function_parentheses(sql: str) -> str:
+    """Add a newline after '(' unless it is part of a function call."""
+    function_blocks, _ = find_sql_blocks(sql)
+
+    def in_function_block(idx):
+        return any(start < idx < end for start, end in function_blocks)
+
     result = []
     for i, ch in enumerate(sql):
         result.append(ch)
-        if ch == '(' and not is_function_call(sql, i):
+        # Only add newline if this '(' is not part of a function call
+        if ch == '(' and not in_function_block(i):
             result.append("\n")
     return "".join(result)
+
 
 def ensure_comment_newlines(sql: str) -> str:
     """Ensure each '--' comment starts on a new line, even when multiple comments are adjacent."""
