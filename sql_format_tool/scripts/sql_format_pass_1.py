@@ -11,6 +11,7 @@ Includes:
 
 import re
 import argparse
+import gc
 from pathlib import Path
 from typing import Tuple, Dict
 
@@ -28,15 +29,6 @@ SNOWFLAKE_FUNCTIONS = {
     "TO_NUMBER","TO_VARCHAR","TO_DECIMAL","TO_DOUBLE","TO_BOOLEAN","TO_VARIANT","TO_OBJECT","TO_ARRAY","TRY_CAST","TRY_TO_DATE","TRY_TO_TIMESTAMP"
 }
 
-PLACEHOLDER_PATTERNS = [
-    (r"({{.*?}})", "JINJA"),
-    (r"({%-?.*?-%})", "JINJA"),
-    (r"({#.*?#})", "JINJA_COMMENT"),
-    (r"--[^\n]*", "SQL_COMMENT"),
-    (r"/\*.*?\*/", "SQL_BLOCK_COMMENT"),
-    (r"'(?:''|[^'])*'", "SINGLE_QUOTED_STRING"),
-    (r'"(?:[^"]|"")*"', "DOUBLE_QUOTED_STRING"),
-]
 
 def has_pass1_comment(sql: str) -> bool:
     match = re.search(r"(?im)^\s*--\s*sqlfluff-pass1-version:\s*(\d+)", sql)
@@ -45,6 +37,44 @@ def has_pass1_comment(sql: str) -> bool:
 def insert_pass1_comment(sql: str) -> str:
     sql = re.sub(r"(?im)^\s*--\s*sqlfluff-pass1-version:\s*\d+\s*", "", sql, count=1)
     return PASS1_COMMENT + "\n" + sql.lstrip()
+
+def pad_commas_spacing(sql: str) -> str:
+    """Ensure all commas have exactly one space after them (and no extra spaces before)."""
+    # Remove spaces before commas
+    sql = re.sub(r'\s*,', ' ,', sql)
+    # Ensure one space after commas (unless end of line)
+    sql = re.sub(r',\s*', ', ', sql)
+    return sql
+
+def normalize_commas_spacing(sql: str) -> str:
+    """Ensure all commas have exactly one space after them (and no extra spaces before)."""
+    # Ensure one space after commas (unless end of line)
+    sql = re.sub(r',\s*', ', ', sql)
+    return sql
+
+def find_sql_blocks(sql: str):
+    """Identify function call blocks and SELECT blocks in SQL."""
+    stack = []
+    function_blocks = []
+    select_blocks = []
+
+    for i, ch in enumerate(sql):
+        if ch == '(':
+            if is_function_call(sql, i):
+                stack.append((i, True))
+            else:
+                stack.append((i, False))
+        elif ch == ')' and stack:
+            start, is_function = stack.pop()
+            if is_function:
+                function_blocks.append((start, i))
+            elif 'select' in sql[start + 1:i].lower():
+                select_blocks.append((start, i))
+
+    return function_blocks, select_blocks
+
+def in_block(idx, blocks):
+    return any(start < idx < end for start, end in blocks)
 
 def is_function_call(sql: str, idx: int) -> bool:
     match = re.search(r"([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s*$", sql[:idx])
@@ -66,16 +96,21 @@ def ensure_comment_newlines(sql: str) -> str:
     return sql
 
 
-def newline_around_non_function_closing_parentheses(sql: str) -> str:
+def newline_around_non_function_closing_parentheses(sql: str, function_blocks) -> str:
+    """Add newlines around ) unless it's inside a function."""
     result = []
     for i, ch in enumerate(sql):
-        if ch == ')' and not is_function_call(sql, i):
-            result.append("\n")
-            result.append(ch)
-            result.append("\n")
+        if ch == ')' and not in_block(i, function_blocks):
+            # Ensure newline before and after
+            if result and result[-1] != '\n':
+                result.append('\n')
+            result.append(')')
+            result.append('\n')
         else:
             result.append(ch)
     return "".join(result)
+
+
 
 def newline_around_cte_closing_parentheses(sql: str) -> str:
     """Ensure there is an extra newline before and after the closing parenthesis of a CTE."""
@@ -113,31 +148,36 @@ def normalize_extra_newlines(sql: str) -> str:
     return re.sub(r'\n{3,}', '\n\n', sql)
 
 
-
-def extract_placeholders(sql: str) -> Tuple[str, Dict[str, str]]:
-    """Replace sensitive content with placeholders using positional matching."""
+def extract_placeholders(sql: str):
     replacements = {}
     placeholder_counter = 1
 
-    # Build a combined regex for all placeholder patterns
+    # Comment patterns first
+    PLACEHOLDER_PATTERNS = [
+        (r"--[^\n]*", "SQL_COMMENT"),
+        (r"/\*.*?\*/", "SQL_BLOCK_COMMENT"),
+        (r"{{.*?}}", "JINJA"),
+        (r"{%-?.*?-%}", "JINJA"),
+        (r"{#.*?#}", "JINJA_COMMENT"),
+        (r"'(?:''|[^'])*'", "SINGLE_QUOTED_STRING"),
+        (r'"(?:[^"]|"")*"', "DOUBLE_QUOTED_STRING"),
+    ]
+
     combined_pattern = "|".join(f"({p})" for p, _ in PLACEHOLDER_PATTERNS)
     regex = re.compile(combined_pattern, re.DOTALL)
 
     def replace_match(match):
         nonlocal placeholder_counter
-        matched_text = match.group(0)
-        # Use the pattern label based on which group matched
-        for i, (_, label) in enumerate(PLACEHOLDER_PATTERNS, start=1):
-            if match.group(i):
-                placeholder_label = label
-                break
-        key = f"__PLACEHOLDER_{placeholder_label}_{placeholder_counter:04d}__"
-        replacements[key] = matched_text
+        idx = match.lastindex - 1
+        label = PLACEHOLDER_PATTERNS[idx][1]
+        key = f"__PLACEHOLDER_{label}_{placeholder_counter:04d}__"
+        replacements[key] = match.group(0)
         placeholder_counter += 1
         return key
 
     sql_with_placeholders = regex.sub(replace_match, sql)
     return sql_with_placeholders, replacements
+
 
 
 def restore_placeholders(sql: str, replacements: Dict[str, str]) -> str:
@@ -163,41 +203,47 @@ def format_sql_keywords(sql: str) -> str:
         return ("\n\n" if kw in major_clauses else "\n") + kw
     return re.sub(pattern, insert_newline, sql, flags=re.IGNORECASE)
 
-def format_sql_commas(sql: str) -> str:
-    """Move commas in SELECT blocks to new lines, ensuring only one space after comma."""
-    result, stack, select_blocks = [], [], []
-    sql = "(" + sql + ")"
-    for i, ch in enumerate(sql):
-        if ch == '(' and not is_function_call(sql, i):
-            stack.append(i)
-        elif ch == ')' and stack:
-            start = stack.pop()
-            if 'select' in sql[start + 1:i].lower():
-                select_blocks.append((start, i))
-    def in_select_block(idx):
-        return any(start < idx < end for start, end in select_blocks)
-    buffer, i = "", 0
+def format_sql_commas(sql: str, function_blocks, select_blocks) -> str:
+    """Move commas in SELECT column lists to new lines, skip function commas, normalize spaces."""
+    result = []
+    buffer = ""
+    i = 0
+
     while i < len(sql):
+        # Keep SELECT keyword intact
         if sql[i:i + 6].lower() == 'select':
             buffer += sql[i:i + 6]
             i += 6
             continue
+
         ch = sql[i]
-        if ch == ',' and in_select_block(i):
-            stripped_buffer = buffer.rstrip()
-            result.append(stripped_buffer)
-            # Add comma and one space only if next char is not already space
+        if ch == ',':
+            # Normalize spacing after commas everywhere
             next_char = sql[i + 1] if i + 1 < len(sql) else ''
-            space = '' if next_char == ' ' else ' '
-            result.append("\n," + space)
-            buffer = ""
+            if in_block(i, select_blocks) and not in_block(i, function_blocks):
+                # Break columns onto new line
+                stripped_buffer = buffer.rstrip()
+                result.append(stripped_buffer)
+                result.append("\n, ")
+                buffer = ""
+            else:
+                # Keep comma inline, but ensure one space
+                stripped_buffer = buffer.rstrip()
+                result.append(stripped_buffer + ",")
+                if next_char != ' ':
+                    result.append(" ")
+                buffer = ""
         else:
             buffer += ch
         i += 1
+
     if buffer.strip():
         result.append(buffer.strip())
+
     formatted = "".join(result).strip()
-    return re.sub(r'\n{3,}', '\n\n', formatted[1:-1] if formatted.startswith('(') else formatted)
+    return re.sub(r'\n{3,}', '\n\n', formatted)
+
+
 
 def indent_sql(sql: str, indent: str = "    ") -> str:
     """Indent SQL based on structure. 
@@ -250,15 +296,16 @@ def indent_sql(sql: str, indent: str = "    ") -> str:
 
         # CASE / WHEN / THEN / ELSE / END blocks
         elif stripped.upper().endswith("CASE"):
-            result.append(indent * depth + stripped)
             depth += 1
+            result.append(indent * depth + stripped)
         elif stripped.upper().startswith(("THEN", "ELSE")):
+            depth += 2
+            result.append(indent * depth + stripped)
+            depth = max(depth - 2, 0)
+        elif stripped.upper().startswith("END"):
             depth += 1
             result.append(indent * depth + stripped)
-            depth = max(depth - 1, 0)
-        elif stripped.upper().startswith("END"):
-            result.append(indent * depth + stripped)
-            depth = max(depth - 1, 0)
+            depth = max(depth - 2, 0)
 
         # Default indentation (uses extra indent if keywords seen)
         else:
@@ -268,7 +315,7 @@ def indent_sql(sql: str, indent: str = "    ") -> str:
     return "\n".join(result)
 
 def write_audit_files(filename: Path, pre_sql: str, post_sql: str, post_sql_with_comment: str,
-                      diff_detected: bool, mirror_audit: bool, last_stage_num: int = 0):
+                      diff_detected: bool, mirror_audit: bool, last_stage_num: int = 1):
     """Write pre/post/diff audit files with numbering aligned to debug output.
        - Diff uses raw pre_sql vs restored (no comment)
        - Post-format uses restored_with_comment
@@ -280,18 +327,21 @@ def write_audit_files(filename: Path, pre_sql: str, post_sql: str, post_sql_with
     # 00 = pre-format
     (audit_base / f"{filename.stem}_00_pre_format.sql").write_text(pre_sql, encoding="utf-8")
 
+    stage = last_stage_num
+
     # Diff (only if difference found) → raw vs restored (no comment)
     if diff_detected:
-        diff_path = audit_base / f"{filename.stem}_{last_stage_num + 1:02d}_diff.txt"
+        diff_path = audit_base / f"{filename.stem}_{stage:02d}_diff.txt"
         diff_path.write_text(
             flatten_sql_whitespace(pre_sql, True) + "\n" +
             flatten_sql_whitespace(post_sql, True),
             encoding="utf-8"
         )
         print(f"❌ Structural/textual change detected in {filename}, diff saved to {diff_path}")
+        stage += 1
 
     # Post-format = restored_with_comment
-    (audit_base / f"{filename.stem}_{last_stage_num + 2:02d}_post_format.sql").write_text(
+    (audit_base / f"{filename.stem}_{stage:02d}_post_format.sql").write_text(
         post_sql_with_comment, encoding="utf-8"
     )
 
@@ -319,19 +369,25 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) ->
     flattened_sql, placeholders = extract_placeholders(raw_sql)
     debug_write("placeholders", flattened_sql)
 
+    # Stage 2: Compute blocks once
+    function_blocks, select_blocks = find_sql_blocks(flattened_sql)
+
     formatted = flatten_sql_whitespace(flattened_sql)
     debug_write("flatten", formatted)
+
+    formatted = pad_commas_spacing(formatted)
+    debug_write("commas_padded", formatted)
 
     formatted = format_sql_keywords(formatted)
     debug_write("keywords", formatted)
 
-    formatted = format_sql_commas(formatted)
+    formatted = format_sql_commas(formatted, function_blocks, select_blocks)
     debug_write("commas", formatted)
 
     formatted = newline_after_non_function_parentheses(formatted)
     debug_write("after_open_paren", formatted)
 
-    formatted = newline_around_non_function_closing_parentheses(formatted)
+    formatted = newline_around_non_function_closing_parentheses(formatted, function_blocks)
     debug_write("around_close_paren", formatted)
 
     formatted = newline_around_cte_closing_parentheses(formatted)
@@ -342,6 +398,9 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) ->
 
     formatted = indent_sql(formatted)
     debug_write("indentation", formatted)
+
+    formatted = normalize_commas_spacing(formatted)
+    debug_write("commas_normalized", formatted)
 
     formatted = restore_placeholders(formatted, placeholders)
     debug_write("placeholders_restored", formatted)
@@ -419,6 +478,8 @@ def main():
     else:
         for file in path.rglob("*.sql"):
             process_sql_file(file, mirror_audit, debug)
+
+    gc.collect()  # Clean up memory after processing
 
 
 if __name__ == "__main__":
