@@ -143,8 +143,9 @@ def normalize_operators(sql: str) -> str:
         pattern = re.compile(rf'\s*({op})\s*')
         sql = pattern.sub(r' \1 ', sql)
 
-    # --- Single-char operators except * and - ---
-    single_ops = r'[=+/%<>]'
+    # --- Single-character operators except * and - ---
+    # Protect characters used in multi-ops: <>, !=, <=, >=, ||
+    single_ops = r'(?<![<>!])=(?![=])|(?<!<)<(?!>)|(?<!>)>(?!<)|[+/%]'
     sql = re.sub(rf'\s*({single_ops})\s*', r' \1 ', sql)
 
     # --- Handle '*' separately (avoid breaking table.*) ---
@@ -166,7 +167,6 @@ def normalize_operators(sql: str) -> str:
     sql = re.sub(r'\n{3,}', '\n\n', sql)
 
     return sql
-
 
 
 def format_parentheses(sql: str, debug: bool = False) -> str:
@@ -252,8 +252,6 @@ def ensure_comment_newlines(sql: str) -> str:
     # Also handle multiple consecutive comments by ensuring only one newline is added
     sql = re.sub(r'(?<!\n)--', '\n--', sql)
     return sql
-
-
 
 
 def flatten_sql_whitespace(sql: str, remove_all_spaces=False) -> str:
