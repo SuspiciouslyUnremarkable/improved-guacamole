@@ -29,6 +29,14 @@ SNOWFLAKE_FUNCTIONS = {
     "TO_NUMBER","TO_VARCHAR","TO_DECIMAL","TO_DOUBLE","TO_BOOLEAN","TO_VARIANT","TO_OBJECT","TO_ARRAY","TRY_CAST","TRY_TO_DATE","TRY_TO_TIMESTAMP"
 }
 
+INDENT = "    "  # one indentation level
+
+# Major SQL clauses that define boundaries
+MAJOR_CLAUSES = (
+    "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
+    "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN",
+    "FULL JOIN", "UNION", "EXCEPT", "INTERSECT", "LIMIT"
+)
 
 def has_pass1_comment(sql: str) -> bool:
     match = re.search(r"(?im)^\s*--\s*sqlfluff-pass1-version:\s*(\d+)", sql)
@@ -39,6 +47,7 @@ def insert_pass1_comment(sql: str) -> str:
     return PASS1_COMMENT + "\n" + sql.lstrip()
 
 def pad_commas_spacing(sql: str) -> str:
+    delay = 0.5  # Delay for step-by-step debugging
     """Ensure all commas have exactly one space after them (and no extra spaces before)."""
     # Remove spaces before commas
     sql = re.sub(r'\s*,', ' ,', sql)
@@ -81,6 +90,20 @@ def is_function_call(sql: str, idx: int) -> bool:
     match = re.search(r"([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s*$", sql[:idx])
     return bool(match and match.group(1).split(".")[-1].upper() in SNOWFLAKE_FUNCTIONS)
 
+def newline_around_semicolons(sql: str) -> str:
+    """Ensure semicolons are on their own line with surrounding newlines."""
+    result = []
+    for ch in sql:
+        if ch == ';':
+            # Ensure newline before and after ;
+            if result and result[-1] != '\n':
+                result.append('\n')
+            result.append(';')
+            result.append('\n')
+        else:
+            result.append(ch)
+    return "".join(result)
+
 def newline_after_non_function_parentheses(sql: str) -> str:
     """Add a newline after '(' unless it is part of a function call."""
     function_blocks, _ = find_sql_blocks(sql)
@@ -100,19 +123,36 @@ def ensure_comment_newlines(sql: str) -> str:
 
 
 def newline_around_non_function_closing_parentheses(sql: str) -> str:
-    """Add newlines around ')' unless it's inside a function call."""
+    """Add newlines around ')' unless it's inside a function call
+    or followed by an AS statement."""
     function_blocks, _ = find_sql_blocks(sql)
     result = []
-    for i, ch in enumerate(sql):
+    length = len(sql)
+
+    i = 0
+    while i < length:
+        ch = sql[i]
         if ch == ')' and not in_block(i, function_blocks):
-            # Ensure newline before and after
-            if result and result[-1] != '\n':
+            # Look ahead to check if followed by "AS"
+            lookahead = sql[i+1:i+4]  # ")as" or ") as"
+            if lookahead.lower().startswith(" as") or lookahead.lower().startswith("as"):
+                # Keep ) inline with AS
+                if result and result[-1] != '\n':
+                    result.append('\n')
+                result.append(')')
+                # Do not add newline, just continue
+            else:
+                # Ensure newline before and after
+                if result and result[-1] != '\n':
+                    result.append('\n')
+                result.append(')')
                 result.append('\n')
-            result.append(')')
-            result.append('\n')
         else:
             result.append(ch)
+        i += 1
+
     return "".join(result)
+
 
 
 
@@ -197,7 +237,7 @@ def flatten_sql_whitespace(sql: str, remove_all_spaces=False) -> str:
     return sql.replace(" ", "") if remove_all_spaces else sql
 
 def format_sql_keywords(sql: str) -> str:
-    keywords = ["LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN","SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","JOIN","UNION","LIMIT","ON","AND","OR","WITH","WHEN","THEN","ELSE","END"]
+    keywords = ["LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN","SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","JOIN","UNION","LIMIT","ON","AND","OR","WITH","WHEN","THEN","ELSE","END","OVER"]
     major_clauses = {"SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN","JOIN"}
     # Avoid matching inside identifiers (underscores allowed in identifiers)
     pattern = r"(?<![A-Za-z0-9_])(?P<kw>{})(?![A-Za-z0-9_])".format("|".join(re.escape(k) for k in keywords))
@@ -211,20 +251,33 @@ def format_sql_commas(sql: str) -> str:
     """Move commas in SELECT column lists to new lines and normalize spacing,
     skipping commas inside function calls."""
     function_blocks, select_blocks = find_sql_blocks(sql)
+
+    # Major clauses that mark the end of a SELECT column list
+    clause_keywords = ("FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT")
+
     result = []
     buffer = ""
     i = 0
+    in_select_columns = False
 
     while i < len(sql):
+        # Detect SELECT keyword
         if sql[i:i + 6].lower() == 'select':
+            in_select_columns = True
             buffer += sql[i:i + 6]
             i += 6
             continue
 
+        # Detect end of column list (major clause)
+        if in_select_columns and any(sql[i:].upper().startswith(k) for k in clause_keywords):
+            in_select_columns = False
+
         ch = sql[i]
         if ch == ',':
             next_char = sql[i + 1] if i + 1 < len(sql) else ''
-            if in_block(i, select_blocks) and not in_block(i, function_blocks):
+            # Are we inside a function or nested SELECT?
+            if (in_select_columns or in_block(i, select_blocks)) and not in_block(i, function_blocks):
+                # Break comma to new line
                 stripped_buffer = buffer.rstrip()
                 result.append(stripped_buffer)
                 result.append("\n, ")
@@ -245,76 +298,355 @@ def format_sql_commas(sql: str) -> str:
     formatted = "".join(result).strip()
     return re.sub(r'\n{3,}', '\n\n', formatted)
 
+import re
+from pathlib import Path
+
+# === Placeholder extraction and restoration ===
+def extract_placeholders(sql: str):
+    """
+    Replace Jinja, quoted strings, and block comments with placeholders.
+    """
+    placeholders = {}
+    patterns = [
+        (r"\{\{.*?\}\}", "__PLACEHOLDER_JINJA_"),
+        (r"'.*?'", "__PLACEHOLDER_SINGLE_QUOTED_STRING_"),
+        (r'".*?"', "__PLACEHOLDER_DOUBLE_QUOTED_STRING_"),
+        (r"/\*.*?\*/", "__PLACEHOLDER_SQL_BLOCK_COMMENT_"),
+        (r"--[^\n]*", "__PLACEHOLDER_SQL_COMMENT_"),
+    ]
+    for pattern, placeholder_prefix in patterns:
+        matches = list(re.finditer(pattern, sql, flags=re.DOTALL))
+        for i, match in enumerate(matches, start=1):
+            key = f"{placeholder_prefix}{str(i).zfill(4)}"
+            placeholders[key] = match.group(0)
+            sql = sql.replace(match.group(0), key)
+    return sql, placeholders
+
+def restore_placeholders(sql: str, placeholders: dict):
+    for key, value in placeholders.items():
+        sql = sql.replace(key, value)
+    return sql
+
+# === Utility ===
+MAJOR_CLAUSES = (
+    "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
+    "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN",
+    "UNION", "EXCEPT", "INTERSECT", "INSERT" , "VALUES"
+)
+
+def starts_with_major_clause(line: str) -> bool:
+    upper = line.lstrip().upper()
+    return any(upper.startswith(clause) for clause in MAJOR_CLAUSES)
+
+import re
+import time
 
 
-def indent_sql(sql: str, indent: str = "    ") -> str:
-    """Indent SQL based on structure. 
-    - `)` must be on its own line.
-    - Lines ending with `(` increase depth.
-    - If a keyword has been seen in the current block, 
-      indent other lines one level deeper.
+def indent_sql_with_children_debug(sql: str, delay: float = 0) -> str:
+    """
+    Debug version of single-pass indentation with:
+      - Major clause child
+      - Parentheses child
+      - CASE WHEN special indentation rules
+      - SELECT clause non-comma indent rule
     """
     lines = sql.splitlines()
-    depth = 0
-    keyword_count = 0
+    indents = [0] * len(lines)
 
-    # Define major clauses that should reset depth
-    major_clauses = (
-        "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY",
-        "HAVING", "JOIN", "LEFT JOIN", "RIGHT JOIN",
-        "INNER JOIN", "OUTER JOIN", "FULL JOIN"
-    )
+    def compute_depth_up_to(index):
+        depth = 0
+        for j in range(index + 1):
+            depth += lines[j].count("(")
+            depth -= lines[j].count(")")
+        return depth
 
-    result = []
+    def is_case_start(line):
+        return re.search(r"\bCASE\b", line, re.IGNORECASE)
 
-    for line in lines:
-        stripped = line.strip()
+    def is_case_end(line):
+        return re.search(r"\bEND\b", line, re.IGNORECASE)
+
+    def apply_case_when_rules(line, in_case_block):
+        upper = line.upper().strip()
+        extra_indent = 0
+        if in_case_block:
+            if upper.startswith("WHEN "):
+                extra_indent = 0
+            elif upper.startswith("THEN") or upper.startswith("ELSE"):
+                extra_indent = 1
+            elif upper.startswith("AND ") or upper.startswith("OR "):
+                extra_indent = 0
+            elif upper.startswith("END"):
+                extra_indent = 0
+        return extra_indent
+
+    def process_major_clause(start_index, paren_adjust=False):
+        clause_type = lines[start_index].strip().upper().split()[0]
+        start_depth = compute_depth_up_to(start_index - 1)
+        stop_threshold = start_depth - 1 if paren_adjust else start_depth
+        print(f"\n[MAJOR CLAUSE CHILD] Starting at line {start_index}: {lines[start_index].strip()} "
+              f"(clause={clause_type}, start_depth={start_depth}, stop_threshold={stop_threshold})")
+        time.sleep(delay)
+
+        in_case_block = False
+        case_depth = None
+
+        i = start_index + 1
+        while i < len(lines):
+            stripped = lines[i].strip()
+            depth_before = compute_depth_up_to(i - 1)
+            depth_after = depth_before + lines[i].count("(") - lines[i].count(")")
+
+            print(f"  Line {i}: {stripped} (depth_before={depth_before}, depth_after={depth_after})")
+
+            # --- CASE WHEN context tracking ---
+            if is_case_start(stripped) and not in_case_block:
+                in_case_block = True
+                case_depth = depth_before
+                print(f"    Entering CASE block (case_depth={case_depth})")
+
+            if is_case_end(stripped) and in_case_block and depth_before == case_depth:
+                in_case_block = False
+                print(f"    Exiting CASE block")
+
+            # --- Stop conditions ---
+            if stripped.startswith(";"):
+                print(f"    Stop: semicolon encountered.")
+                break
+            if starts_with_major_clause(stripped) and depth_before == start_depth:
+                print(f"    Stop: new major clause at same level as starting clause.")
+                break
+            if depth_after < stop_threshold:
+                print(f"    Stop: depth decreased below threshold ({stop_threshold}).")
+                break
+
+            # --- SELECT non-comma rule ---
+            extra_select_indent = 0
+            if clause_type == "SELECT" and not stripped.startswith(","):
+                extra_select_indent = 1
+                print(f"    SELECT non-comma rule applied: +1")
+
+            # --- CASE WHEN rules ---
+            extra_case_indent = apply_case_when_rules(stripped, in_case_block)
+            if extra_case_indent:
+                print(f"    CASE WHEN rule applied: +{extra_case_indent}")
+
+            total_extra = extra_select_indent + extra_case_indent
+            indents[i] += 1 + total_extra
+            print(f"    Indent applied (+{1 + total_extra}) because inside major clause block.")
+            time.sleep(delay)
+            i += 1
+
+        print(f"[MAJOR CLAUSE CHILD] Completed at line {i}")
+        return i
+
+    def process_parentheses_block(start_index):
+        print(f"\n[PARENS CHILD] Starting at line {start_index}: {lines[start_index].strip()}")
+        time.sleep(delay)
+        depth = 1
+        i = start_index + 1
+        while i < len(lines) and depth > 0:
+            stripped = lines[i].strip()
+            depth += stripped.count("(")
+            depth -= stripped.count(")")
+            if depth <= 0:
+                print(f"  Line {i}: {stripped} (paren depth={depth})")
+                print(f"    Stop: closing parenthesis found, do not indent this line.")
+                break
+            print(f"  Line {i}: {stripped} (paren depth={depth})")
+            indents[i] += 1
+            print(f"    Indent applied (+1) because inside parentheses block.")
+            time.sleep(delay)
+            i += 1
+        print(f"[PARENS CHILD] Completed at line {i}")
+        return i
+
+    # === Main single-pass ===
+    i = 0
+    while i < len(lines):
+        stripped = lines[i].strip()
+        print(f"\n[MAIN] Line {i}: {stripped}")
+        time.sleep(delay)
 
         if not stripped:
-            result.append("")
+            print(f"  Skip: blank line")
+            i += 1
             continue
 
-        # Closing parenthesis on its own line decreases depth
-        if stripped == ")":
-            depth = max(depth - 1, 0)
-            result.append(indent * depth + ")")
-            keyword_count = 0  # reset for new block
+        paren_trigger = stripped.endswith("(")
+        major_trigger = starts_with_major_clause(stripped)
 
-        # Opening parenthesis when it ends the line increases depth
-        elif stripped.endswith("("):
-            result.append(indent * depth + stripped)
-            depth += 1
-            keyword_count = 0  # reset keywords when entering new block
+        if paren_trigger:
+            print(f"  Parentheses detected → launching child first")
+            process_parentheses_block(i)
+        if major_trigger:
+            print(f"  Major clause detected → launching child second")
+            process_major_clause(i, paren_adjust=paren_trigger)
 
-        # Begins with SELECT (start of a block)
-        elif stripped.upper().startswith("SELECT"):
-            result.append(indent * depth + stripped)
-            keyword_count += 1
+        if not paren_trigger and not major_trigger:
+            print(f"  No child triggered → moving to next line")
 
-        # Major clauses at start of line
-        elif any(stripped.upper().startswith(k) for k in major_clauses):
-            result.append(indent * depth + stripped)
-            keyword_count += 1
+        i += 1
 
-        # CASE / WHEN / THEN / ELSE / END blocks
-        elif stripped.upper().endswith("CASE"):
-            depth += 1
-            result.append(indent * depth + stripped)
-        elif stripped.upper().startswith(("THEN", "ELSE")):
-            depth += 2
-            result.append(indent * depth + stripped)
-            depth = max(depth - 2, 0)
-        elif stripped.upper().startswith("END"):
-            depth += 1
-            result.append(indent * depth + stripped)
-            depth = max(depth - 2, 0)
+    # === Apply indentation ===
+    print("\n[APPLY INDENTATION]")
+    output = []
+    for line_index, (line, level) in enumerate(zip(lines, indents)):
+        print(f"Line {line_index}: indent level={level} → {line.strip()}")
+        time.sleep(delay)
+        output.append(("    " * level) + line.strip() if line.strip() else "")
 
-        # Default indentation (uses extra indent if keywords seen)
-        else:
-            extra_indent = 1 if keyword_count > 0 else 0
-            result.append(indent * (depth + extra_indent) + stripped)
+    print("\n[COMPLETE]")
+    return "\n".join(output)
 
-    return "\n".join(result)
+import re
+
+def indent_sql_with_children(sql: str) -> str:
+    """
+    Production version of single-pass indentation:
+      - Major clause indentation
+      - Parentheses block indentation
+      - CASE WHEN indentation rules
+      - SELECT non-comma indentation
+    """
+    lines = sql.splitlines()
+    indents = [0] * len(lines)
+
+    def compute_depth_up_to(index):
+        depth = 0
+        for j in range(index + 1):
+            depth += lines[j].count("(")
+            depth -= lines[j].count(")")
+        return depth
+
+    def starts_with_major_clause(line):
+        upper = line.upper().strip()
+        return (
+            upper.startswith("SELECT")
+            or upper.startswith("FROM")
+            or upper.startswith("WHERE")
+            or upper.startswith("JOIN")
+            or upper.startswith("INNER JOIN")
+            or upper.startswith("LEFT JOIN")
+            or upper.startswith("RIGHT JOIN")
+            or upper.startswith("FULL JOIN")
+            or upper.startswith("UNION")
+            or upper.startswith("EXCEPT")
+            or upper.startswith("INTERSECT")
+            or upper.startswith("ORDER BY")
+            or upper.startswith("GROUP BY")
+            or upper.startswith("HAVING")
+            or upper.startswith("LIMIT")
+        )
+
+    def is_case_start(line):
+        return re.search(r"\bCASE\b", line, re.IGNORECASE)
+
+    def is_case_end(line):
+        return re.search(r"\bEND\b", line, re.IGNORECASE)
+
+    def apply_case_when_rules(line, in_case_block):
+        upper = line.upper().strip()
+        extra_indent = 0
+        if in_case_block:
+            if upper.startswith("WHEN "):
+                extra_indent = 0
+            elif upper.startswith("THEN") or upper.startswith("ELSE"):
+                extra_indent = 1
+            elif upper.startswith("AND ") or upper.startswith("OR "):
+                extra_indent = 0
+            elif upper.startswith("END"):
+                extra_indent = 0
+        return extra_indent
+
+    def process_major_clause(start_index, paren_adjust=False):
+        clause_type = lines[start_index].strip().upper().split()[0]
+        start_depth = compute_depth_up_to(start_index - 1)
+        stop_threshold = start_depth - 1 if paren_adjust else start_depth
+
+        in_case_block = False
+        case_depth = None
+
+        i = start_index + 1
+        while i < len(lines):
+            stripped = lines[i].strip()
+            depth_before = compute_depth_up_to(i - 1)
+            depth_after = depth_before + lines[i].count("(") - lines[i].count(")")
+
+            # CASE WHEN tracking
+            if is_case_start(stripped) and not in_case_block:
+                in_case_block = True
+                case_depth = depth_before
+            if is_case_end(stripped) and in_case_block and depth_before == case_depth:
+                in_case_block = False
+
+            # Stop conditions
+            if stripped.startswith(";"):
+                break
+            if starts_with_major_clause(stripped) and depth_before == start_depth:
+                break
+            if depth_after < stop_threshold:
+                break
+
+            # SELECT non-comma rule (only at same level, not deeper parentheses)
+            extra_select_indent = 0
+            if clause_type == "SELECT":
+                if not stripped.startswith(","):
+                    extra_select_indent = 1
+                elif depth_before != start_depth:
+                    extra_select_indent = 1
+
+
+
+            # CASE WHEN rules
+            extra_case_indent = apply_case_when_rules(stripped, in_case_block)
+
+            # Apply indentation
+            total_extra = extra_select_indent + extra_case_indent
+            indents[i] += 1 + total_extra
+            i += 1
+        return i
+
+    def process_parentheses_block(start_index):
+        depth = 1
+        i = start_index + 1
+        while i < len(lines) and depth > 0:
+            stripped = lines[i].strip()
+            depth += stripped.count("(")
+            depth -= stripped.count(")")
+            if depth <= 0:
+                break
+            indents[i] += 1
+            i += 1
+        return i
+
+    # === Main single-pass ===
+    i = 0
+    while i < len(lines):
+        stripped = lines[i].strip()
+        if not stripped:
+            i += 1
+            continue
+
+        paren_trigger = stripped.endswith("(")
+        major_trigger = starts_with_major_clause(stripped)
+
+        # Run both if both conditions are met
+        if paren_trigger:
+            process_parentheses_block(i)
+        if major_trigger:
+            process_major_clause(i, paren_adjust=paren_trigger)
+
+        i += 1
+
+    # === Apply indentation ===
+    output = []
+    for line, level in zip(lines, indents):
+        output.append(("    " * level) + line.strip() if line.strip() else "")
+
+    return "\n".join(output)
+
+
 
 def write_audit_files(filename: Path, pre_sql: str, post_sql: str, post_sql_with_comment: str,
                       diff_detected: bool, mirror_audit: bool, last_stage_num: int = 1):
@@ -383,6 +715,9 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) ->
     formatted = format_sql_commas(formatted)
     debug_write("commas", formatted)
 
+    formatted = newline_around_semicolons(formatted)
+    debug_write("semicolons", formatted)
+
     formatted = newline_after_non_function_parentheses(formatted)
     debug_write("after_open_paren", formatted)
 
@@ -395,7 +730,7 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) ->
     formatted = normalize_extra_newlines(formatted)
     debug_write("normalized_newlines", formatted)
 
-    formatted = indent_sql(formatted)
+    formatted = indent_sql_with_children(formatted)
     debug_write("indentation", formatted)
 
     formatted = normalize_commas_spacing(formatted)
