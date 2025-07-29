@@ -561,14 +561,14 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False, de
     formatted = flatten_sql_whitespace(flattened_sql)
     debug_write("flatten", formatted)
 
+    formatted = normalize_operators(formatted)
+    debug_write("format_operators", formatted)
+
     formatted = format_sql_keywords(formatted)
     debug_write("newline_keywords", formatted)
 
     formatted = format_sql_commas(formatted)
     debug_write("newline_commas", formatted)
-
-    formatted = normalize_operators(formatted)
-    debug_write("format_operators", formatted)
 
     formatted = format_parentheses(formatted)
     debug_write("format_parentheses", formatted)
