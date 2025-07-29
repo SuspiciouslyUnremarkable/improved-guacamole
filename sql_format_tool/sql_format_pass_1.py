@@ -450,8 +450,9 @@ def process_major_clause(lines, indents, start_index, debug):
         # --- Indentation rules ---
         extra_select_indent = 0
         if clause_type == "SELECT":
-            # Only add +1 if it's not a comma-prefixed column
-            if not stripped.startswith(","):
+            # If the line is NOT a comma-prefixed column OR 
+            # is not already one level deeper than the SELECT baseline
+            if (not stripped.startswith(",")) or (relative_before != 0):
                 extra_select_indent = 1
 
         # Apply final indentation
