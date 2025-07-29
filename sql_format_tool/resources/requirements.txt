@@ -4,3 +4,4 @@ dbt-snowflake
 sqlparse
 dbt-sqlite
 argparse
+bs4

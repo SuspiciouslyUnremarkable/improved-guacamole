@@ -16,3 +16,12 @@ function_test as (SELECT cte.claim_id
         ON cte.claim_id = cws.claim_id
 
 )
+
+
+, excludes as (
+
+    select awoifn
+    , aowinf.* exclude (awoifn,awoifn)
+    , o9nfff
+    from {{ ref('aowinf') }} aowinf
+)

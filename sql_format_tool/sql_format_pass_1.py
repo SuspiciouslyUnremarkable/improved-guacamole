@@ -1,5 +1,3 @@
-# For step-by-step debugging and slowing down
-import time
 #!/usr/bin/env python3
 """
 Unified SQL Formatting Script (Pass 1)
@@ -14,187 +12,68 @@ Includes:
 import re
 import argparse
 import gc
-import time
+import json
 from pathlib import Path
 from typing import Tuple, Dict
+
+
+
 
 PASS1_VERSION = 1
 PASS1_COMMENT = f"-- sqlfluff-pass1-version: {PASS1_VERSION}"
 AUDIT_ROOT = Path("sql_format_tool/audit_folder")
 DBT_PROJECT_DIR = Path("dbt").resolve()
 
-SNOWFLAKE_FUNCTIONS = {
-    "ARRAY_AGG","AVG","CAST","COALESCE","COUNT","DATEADD","DATEDIFF","FIRST_VALUE","LAST_VALUE","LISTAGG","MAX","MIN","ROW_NUMBER",
-    "SUM","TO_DATE","TO_TIMESTAMP","NVL","IFF","CASE","DECODE","LEAD","LAG","RANK","DENSE_RANK","NTILE","ABS","CEIL","CEILING","FLOOR",
-    "ROUND","TRUNC","EXP","LN","LOG","LOG10","MOD","POWER","SQRT","SIGN","SIN","COS","TAN","ASIN","ACOS","ATAN","ATAN2","COSH","SINH",
-    "TANH","GREATEST","LEAST","NULLIF","REGEXP_REPLACE","REGEXP_SUBSTR","SPLIT_PART","SUBSTR","SUBSTRING","TRIM","LTRIM","RTRIM","UPPER",
-    "LOWER","INITCAP","REPLACE","REVERSE","CONCAT","CONCAT_WS","LPAD","RPAD","LEFT","RIGHT","POSITION","CHARINDEX","ASCII","CHR","TO_CHAR",
-    "TO_NUMBER","TO_VARCHAR","TO_DECIMAL","TO_DOUBLE","TO_BOOLEAN","TO_VARIANT","TO_OBJECT","TO_ARRAY","TRY_CAST","TRY_TO_DATE","TRY_TO_TIMESTAMP"
-}
 
 INDENT = "    "  # one indentation level
+
 
 # Major SQL clauses that define boundaries
 MAJOR_CLAUSES = (
     "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
     "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN",
-    "FULL JOIN", "UNION", "EXCEPT", "INTERSECT", "LIMIT"
+    "FULL JOIN", "UNION", "EXCEPT", "INTERSECT", "LIMIT", "UPDATE"
 )
+
+
+KEYWORDS = [
+        "LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "OUTER JOIN", "FULL JOIN",
+        "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
+        "JOIN", "UNION", "LIMIT", "ON", "AND", "OR",
+        "WITH", "WHEN", "THEN", "ELSE", "END", "OVER", "VALUES"
+]
+
+
+def load_snowflake_functions(json_path: str = None) -> set:
+    """
+    Load Snowflake functions from a JSON file.
+    Returns a set of function names in uppercase for quick lookup.
+    """
+    # Default path if none provided: next to this script
+    if json_path is None:
+        json_path = Path(__file__).parent / "resources" / "snowflake_functions.json"
+
+    with open(json_path, "r", encoding="utf-8") as f:
+        functions = json.load(f)
+
+    # Convert to uppercase set
+    return {func["name"].upper() for func in functions if "name" in func}
+
+
+SNOWFLAKE_FUNCTIONS = load_snowflake_functions()
+
 
 def has_pass1_comment(sql: str) -> bool:
     match = re.search(r"(?im)^\s*--\s*sqlfluff-pass1-version:\s*(\d+)", sql)
     return bool(match and int(match.group(1)) >= PASS1_VERSION)
 
+
 def insert_pass1_comment(sql: str) -> str:
     sql = re.sub(r"(?im)^\s*--\s*sqlfluff-pass1-version:\s*\d+\s*", "", sql, count=1)
     return PASS1_COMMENT + "\n" + sql.lstrip()
 
-def pad_commas_spacing(sql: str) -> str:
-    delay = 0.5  # Delay for step-by-step debugging
-    """Ensure all commas have exactly one space after them (and no extra spaces before)."""
-    # Remove spaces before commas
-    sql = re.sub(r'\s*,', ' ,', sql)
-    # Ensure one space after commas (unless end of line)
-    sql = re.sub(r',\s*', ', ', sql)
-    return sql
 
-def normalize_commas_spacing(sql: str) -> str:
-    """Ensure all commas have exactly one space after them (and no extra spaces before)."""
-    # Ensure one space after commas (unless end of line)
-    sql = re.sub(r',\s*', ', ', sql)
-    return sql
-
-def find_sql_blocks(sql: str):
-    """Identify function call blocks and SELECT blocks in SQL."""
-    stack = []
-    function_blocks = []
-    select_blocks = []
-
-    for i, ch in enumerate(sql):
-        if ch == '(':
-            if is_function_call(sql, i):
-                stack.append((i, True))
-            else:
-                stack.append((i, False))
-        elif ch == ')' and stack:
-            start, is_function = stack.pop()
-            if is_function:
-                function_blocks.append((start, i))
-            elif 'select' in sql[start + 1:i].lower():
-                select_blocks.append((start, i))
-
-    return function_blocks, select_blocks
-
-def in_block(idx: int, blocks: list[tuple[int, int]]) -> bool:
-    """Return True if index is inside or at the boundaries of any block."""
-    return any(start <= idx <= end for start, end in blocks)
-
-def is_function_call(sql: str, idx: int) -> bool:
-    match = re.search(r"([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s*$", sql[:idx])
-    return bool(match and match.group(1).split(".")[-1].upper() in SNOWFLAKE_FUNCTIONS)
-
-def newline_around_semicolons(sql: str) -> str:
-    """Ensure semicolons are on their own line with surrounding newlines."""
-    result = []
-    for ch in sql:
-        if ch == ';':
-            # Ensure newline before and after ;
-            if result and result[-1] != '\n':
-                result.append('\n')
-            result.append(';')
-            result.append('\n')
-        else:
-            result.append(ch)
-    return "".join(result)
-
-def newline_after_non_function_parentheses(sql: str) -> str:
-    """Add a newline after '(' unless it is part of a function call."""
-    function_blocks, _ = find_sql_blocks(sql)
-    result = []
-    for i, ch in enumerate(sql):
-        result.append(ch)
-        if ch == '(' and not in_block(i, function_blocks):
-            result.append("\n")
-    return "".join(result)
-
-def ensure_comment_newlines(sql: str) -> str:
-    """Ensure each '--' comment starts on a new line, even when multiple comments are adjacent."""
-    # Replace any occurrence of '--' that is not already at the start of a line with a newline before it
-    # Also handle multiple consecutive comments by ensuring only one newline is added
-    sql = re.sub(r'(?<!\n)--', '\n--', sql)
-    return sql
-
-
-def newline_around_non_function_closing_parentheses(sql: str) -> str:
-    """Add newlines around ')' unless it's inside a function call
-    or followed by an AS statement."""
-    function_blocks, _ = find_sql_blocks(sql)
-    result = []
-    length = len(sql)
-
-    i = 0
-    while i < length:
-        ch = sql[i]
-        if ch == ')' and not in_block(i, function_blocks):
-            # Look ahead to check if followed by "AS"
-            lookahead = sql[i+1:i+4]  # ")as" or ") as"
-            if lookahead.lower().startswith(" as") or lookahead.lower().startswith("as"):
-                # Keep ) inline with AS
-                if result and result[-1] != '\n':
-                    result.append('\n')
-                result.append(')')
-                # Do not add newline, just continue
-            else:
-                # Ensure newline before and after
-                if result and result[-1] != '\n':
-                    result.append('\n')
-                result.append(')')
-                result.append('\n')
-        else:
-            result.append(ch)
-        i += 1
-
-    return "".join(result)
-
-
-
-
-def newline_around_cte_closing_parentheses(sql: str) -> str:
-    """Ensure there is an extra newline before and after the closing parenthesis of a CTE."""
-    result = []
-    tokens = sql.splitlines(keepends=True)
-    depth = 0
-    in_cte = False
-
-    for line in tokens:
-        stripped = line.strip().upper()
-        # Detect CTE start: WITH name AS (  or  , name AS (
-        if re.match(r'^(WITH|,)\s+\w+\s+AS\s*\($', stripped, re.IGNORECASE):
-            in_cte = True
-            depth = 1
-            result.append(line)
-            continue
-        if in_cte:
-            depth += stripped.count('(')
-            depth -= stripped.count(')')
-            if depth == 0 and ')' in stripped:
-                # Insert extra newline before and after closing parenthesis of CTE
-                if not result[-1].endswith('\n'):
-                    result[-1] = result[-1] + '\n'
-                result.append('\n)\n\n')
-                in_cte = False
-                continue
-            result.append(line)
-        else:
-            result.append(line)
-    return ''.join(result)
-
-
-def normalize_extra_newlines(sql: str) -> str:
-    """Replace any sequence of 3 or more newlines with exactly 2 newlines."""
-    return re.sub(r'\n{3,}', '\n\n', sql)
-
-
+# === Placeholder extraction and restoration ===
 def extract_placeholders(sql: str):
     replacements = {}
     placeholder_counter = 1
@@ -226,12 +105,172 @@ def extract_placeholders(sql: str):
     return sql_with_placeholders, replacements
 
 
-
 def restore_placeholders(sql: str, replacements: Dict[str, str]) -> str:
     """Restore placeholders back to their original content."""
     for key, original in replacements.items():
         sql = sql.replace(key, original)
     return sql
+
+
+def find_sql_blocks(sql: str):
+    """Identify function call blocks and SELECT blocks in SQL."""
+    stack = []
+    function_blocks = []
+
+    for i, ch in enumerate(sql):
+        if ch == '(':
+            if is_function_call(sql, i):
+                stack.append((i, True))
+            else:
+                stack.append((i, False))
+        elif ch == ')' and stack:
+            start, is_function = stack.pop()
+            if is_function:
+                function_blocks.append((start, i))
+
+    return function_blocks
+
+
+def in_block(idx: int, blocks: list[tuple[int, int]]) -> bool:
+    """Return True if index is inside or at the boundaries of any block."""
+    return any(start <= idx <= end for start, end in blocks)
+
+
+def is_function_call(sql: str, idx: int) -> bool:
+    match = re.search(r"([a-zA-Z_][a-zA-Z0-9_]*(?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)\s*$", sql[:idx])
+    return bool(match and match.group(1).split(".")[-1].upper() in SNOWFLAKE_FUNCTIONS)
+
+
+def normalize_operators(sql: str) -> str:
+    """
+    Normalize spacing around SQL operators:
+    - Handles multi-character operators first (e.g., >=, <=, !=, <>, ||)
+    - Then handles single-character operators while excluding those used in multi-ops.
+    """
+
+    MULTI_OPS = ["<>", "!=", "<=", ">=", "||"]
+
+    # --- Multi-character operators ---
+    for op in MULTI_OPS:
+        pattern = re.compile(rf'\s*({re.escape(op)})\s*')
+        sql = pattern.sub(r' \1 ', sql)
+
+    # --- Single-character operators (excluding multi-op contexts) ---
+    multi_chars = set("".join(MULTI_OPS))  # chars used in multi-ops: <, >, =, !, |
+    single_ops = ['=', '+', '/', '%', '<', '>']  # base set
+
+    for op in single_ops:
+        if op in multi_chars:
+            # Skip because already handled as part of multi-ops
+            continue
+        pattern = re.compile(rf'\s*({re.escape(op)})\s*')
+        sql = pattern.sub(r' \1 ', sql)
+
+    # --- Handle '*' separately (avoid breaking table.*) ---
+    # Step 1: Normal star spacing (but not table.*)
+    sql = re.sub(r'(?<!\.)\s*\*\s*', r' * ', sql)
+
+    # Step 2: Cleanup function-parameter stars back to count(*)
+    sql = re.sub(r'\(\s*\*\s*\)', r'(*)', sql)
+
+    # --- Handle '-' separately (avoid negative numbers) ---
+    # Only add spacing if '-' is between two non-operator tokens
+    # e.g., "a-1" -> "a - 1", but "-1" stays as is
+    sql = re.sub(r'(?<=\w)\s*-\s*(?=\w)', r' - ', sql)
+
+    # --- Handle semicolons ---
+    sql = re.sub(r'\s*;\s*', r'\n\n;\n\n', sql)
+
+    # --- Collapse triple newlines ---
+    sql = re.sub(r'\n{3,}', '\n\n', sql)
+
+    return sql
+
+
+def format_parentheses(sql: str, debug: bool = False) -> str:
+    """
+    Adds newlines around parentheses:
+    - CTE parentheses -> \n\n prefix/suffix
+    - Other non-function parentheses -> \n prefix/suffix
+    - Function parentheses -> no additional newlines
+    """
+
+    def tokenize(sql_text):
+        # Preserve whitespace and symbols separately
+        return re.findall(r"\s+|[A-Za-z0-9_]+|\(|\)|.", sql_text)
+
+    def is_cte_context(tokens, index):
+        """
+        Determine if '(' at tokens[index] is a CTE open:
+        Looks for pattern: "<alias> AS ("
+        and ensures a WITH exists before in same statement.
+        """
+        # Find previous non-whitespace token
+        j = index - 1
+        while j >= 0 and tokens[j].isspace():
+            j -= 1
+        if j < 1 or tokens[j].upper() != "AS":
+            return False
+        # Ensure WITH exists earlier in this statement
+        return any(tok.upper() == "WITH" for tok in tokens[:j])
+
+    tokens = tokenize(sql)
+    output = []
+    paren_stack = []
+
+    for i, tok in enumerate(tokens):
+        if tok == "(":
+            # Look back to detect function calls
+            j = i - 1
+            while j >= 0 and tokens[j].isspace():
+                j -= 1
+            prev_token = tokens[j].upper() if j >= 0 else ""
+
+            if prev_token in SNOWFLAKE_FUNCTIONS:
+                paren_stack.append("function")
+                output.append("(")
+                if debug:
+                    print(f"[FUNC OPEN] {prev_token}(")
+            elif is_cte_context(tokens, i):
+                paren_stack.append("cte")
+                output.append("(\n\n")
+                if debug:
+                    print("[CTE OPEN] ( after alias AS")
+            else:
+                paren_stack.append("group")
+                output.append("(\n")
+                if debug:
+                    print(f"[GROUP OPEN] ( after {prev_token}")
+        elif tok == ")":
+            context = paren_stack.pop() if paren_stack else "group"
+            if context == "function":
+                output.append(")")
+                if debug:
+                    print("[FUNC CLOSE] )")
+            elif context == "cte":
+                output.append("\n\n)\n\n")
+                if debug:
+                    print("[CTE CLOSE] )")
+            else:
+                output.append("\n)")
+                if debug:
+                    print("[GROUP CLOSE] )")
+        else:
+            output.append(tok)
+
+    formatted = "".join(output)
+    # Normalize extra newlines (3 or more -> 2)
+    formatted = re.sub(r"\n{3,}", "\n\n", formatted)
+    return formatted
+
+
+def ensure_comment_newlines(sql: str) -> str:
+    """Ensure each '--' comment starts on a new line, even when multiple comments are adjacent."""
+    # Replace any occurrence of '--' that is not already at the start of a line with a newline before it
+    # Also handle multiple consecutive comments by ensuring only one newline is added
+    sql = re.sub(r'(?<!\n)--', '\n--', sql)
+    return sql
+
 
 def flatten_sql_whitespace(sql: str, remove_all_spaces=False) -> str:
     sql = re.sub(r"\\s+", " ", sql)
@@ -239,330 +278,242 @@ def flatten_sql_whitespace(sql: str, remove_all_spaces=False) -> str:
     sql = re.sub(r" {2,}", " ", sql)  # Replace two or more spaces with a single space
     return sql.replace(" ", "") if remove_all_spaces else sql
 
+
 def format_sql_keywords(sql: str) -> str:
-    keywords = ["LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN","SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","JOIN","UNION","LIMIT","ON","AND","OR","WITH","WHEN","THEN","ELSE","END","OVER"]
-    major_clauses = {"SELECT","FROM","WHERE","GROUP BY","ORDER BY","HAVING","LEFT JOIN","RIGHT JOIN","INNER JOIN","OUTER JOIN","FULL JOIN","JOIN"}
-    # Avoid matching inside identifiers (underscores allowed in identifiers)
-    pattern = r"(?<![A-Za-z0-9_])(?P<kw>{})(?![A-Za-z0-9_])".format("|".join(re.escape(k) for k in keywords))
+    # Regex pattern to match keywords
+    pattern = r"(?<![A-Za-z0-9_])(?P<kw>{})(?![A-Za-z0-9_])".format("|".join(re.escape(k) for k in KEYWORDS))
 
     def insert_newline(match):
         kw = match.group("kw").upper()
-        return ("\n\n" if kw in major_clauses else "\n") + kw
+        start_index = match.start()
+        # Check for existing newline directly before keyword
+        if start_index > 0 and sql[start_index - 1] == "\n":
+            return kw
+        # Use \r as a placeholder for blank lines if it's a major clause
+        if kw in MAJOR_CLAUSES:
+            return "\n\n" + kw  # Marker for blank line
+        return "\n" + kw
+
     return re.sub(pattern, insert_newline, sql, flags=re.IGNORECASE)
 
-def format_sql_commas(sql: str) -> str:
-    """Move commas in SELECT column lists to new lines and normalize spacing,
-    skipping commas inside function calls."""
-    function_blocks, select_blocks = find_sql_blocks(sql)
 
-    # Major clauses that mark the end of a SELECT column list
-    clause_keywords = ("FROM", "WHERE", "GROUP BY", "HAVING", "ORDER BY", "LIMIT")
-
-    result = []
-    buffer = ""
-    i = 0
-    in_select_columns = False
-
-    while i < len(sql):
-        # Detect SELECT keyword
-        if sql[i:i + 6].lower() == 'select':
-            in_select_columns = True
-            buffer += sql[i:i + 6]
-            i += 6
-            continue
-
-        # Detect end of column list (major clause)
-        if in_select_columns and any(sql[i:].upper().startswith(k) for k in clause_keywords):
-            in_select_columns = False
-
-        ch = sql[i]
-        if ch == ',':
-            next_char = sql[i + 1] if i + 1 < len(sql) else ''
-            # Are we inside a function or nested SELECT?
-            if (in_select_columns or in_block(i, select_blocks)) and not in_block(i, function_blocks):
-                # Break comma to new line
-                stripped_buffer = buffer.rstrip()
-                result.append(stripped_buffer)
-                result.append("\n, ")
-                buffer = ""
-            else:
-                stripped_buffer = buffer.rstrip()
-                result.append(stripped_buffer + ",")
-                if next_char != ' ':
-                    result.append(" ")
-                buffer = ""
-        else:
-            buffer += ch
-        i += 1
-
-    if buffer.strip():
-        result.append(buffer.strip())
-
-    formatted = "".join(result).strip()
-    return re.sub(r'\n{3,}', '\n\n', formatted)
-
-import re
-from pathlib import Path
-
-# === Placeholder extraction and restoration ===
-def extract_placeholders(sql: str):
+def finalize_newlines(sql: str) -> str:
     """
-    Replace Jinja, quoted strings, and block comments with placeholders.
+    Normalize whitespace and newlines:
+    - Replace sequences of 3 or more newlines with exactly 2 newlines.
+    - Remove leading and trailing whitespace from each line.
     """
-    placeholders = {}
-    patterns = [
-        (r"\{\{.*?\}\}", "__PLACEHOLDER_JINJA_"),
-        (r"'.*?'", "__PLACEHOLDER_SINGLE_QUOTED_STRING_"),
-        (r'".*?"', "__PLACEHOLDER_DOUBLE_QUOTED_STRING_"),
-        (r"/\*.*?\*/", "__PLACEHOLDER_SQL_BLOCK_COMMENT_"),
-        (r"--[^\n]*", "__PLACEHOLDER_SQL_COMMENT_"),
-    ]
-    for pattern, placeholder_prefix in patterns:
-        matches = list(re.finditer(pattern, sql, flags=re.DOTALL))
-        for i, match in enumerate(matches, start=1):
-            key = f"{placeholder_prefix}{str(i).zfill(4)}"
-            placeholders[key] = match.group(0)
-            sql = sql.replace(match.group(0), key)
-    return sql, placeholders
+    # Collapse 3+ newlines to 2
+    sql = re.sub(r'\n{3,}', '\n\n', sql)
 
-def restore_placeholders(sql: str, placeholders: dict):
-    for key, value in placeholders.items():
-        sql = sql.replace(key, value)
     return sql
 
-# === Utility ===
-MAJOR_CLAUSES = (
-    "SELECT", "FROM", "WHERE", "GROUP BY", "ORDER BY", "HAVING",
-    "JOIN", "INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN",
-    "UNION", "EXCEPT", "INTERSECT", "INSERT" , "VALUES"
-)
+
+def format_sql_commas(sql: str) -> str:
+    """
+    Ensure commas are formatted correctly:
+    - Commas inside function calls remain inline
+    - Commas outside function calls are moved to a new line
+    """
+    function_blocks = find_sql_blocks(sql)
+    pattern = re.compile(r'[\s]*,[\s]*')
+
+    def replacement(match):
+        comma_pos = match.start() + match.group().find(',')  # actual comma position
+        if in_block(comma_pos, function_blocks):
+            return ", "  # inside function: keep inline
+        else:
+            return "\n, "  # outside function: break line
+    return pattern.sub(replacement, sql)
+
 
 def starts_with_major_clause(line: str) -> bool:
-    upper = line.lstrip().upper()
-    return any(upper.startswith(clause) for clause in MAJOR_CLAUSES)
+    """Detect if a line starts with a major SQL clause keyword."""
+    return any(line.upper().startswith(clause) for clause in MAJOR_CLAUSES)
 
-import re
-import time
 
-def indent_sql_with_children_debug(sql: str, delay: float = 0.2) -> str:
+def compute_depth_up_to(lines, index: int) -> int:
+    """Count parentheses depth up to and including a given index."""
+    depth = 0
+    for j in range(index + 1):
+        depth += lines[j].count("(")
+        depth -= lines[j].count(")")
+    return depth
+
+
+def process_case_block(lines, indents, start_index, debug, depth=0, max_depth=10):
+    if depth > max_depth:
+        debug(f"[CASE CHILD] Max recursion depth exceeded at {start_index}, skipping CASE.")
+        return start_index + 1
+
+    base_indent = indents[start_index]
+    debug(f"[CASE CHILD]({depth}) Starting at line {start_index}: {lines[start_index]} (base={base_indent})")
+
+    i = start_index + 1
+    while i < len(lines):
+        stripped = lines[i].strip()
+        upper = stripped.upper()
+        if not stripped:
+            i += 1
+            continue
+
+        # Indentation rules
+        if upper.startswith("WHEN"):
+            indents[i] = base_indent + 1
+            debug(f"  Depth {depth}: WHEN at {i}: -> {base_indent + 1}")
+        elif upper.startswith("THEN"):
+            indents[i] = base_indent + 2
+            debug(f"  Depth {depth}: THEN at {i}: -> {base_indent + 2}")
+        elif upper.startswith("ELSE"):
+            indents[i] = base_indent + 2
+            debug(f"  Depth {depth}: ELSE at {i}: -> {base_indent + 2}")
+        elif upper.startswith("END"):
+            indents[i] = base_indent + 1
+            debug(f"[CASE CHILD] Depth {depth}: END at {i}: -> {base_indent + 1} (returning)")
+            return i + 1
+        else:
+            indents[i] = max(indents[i], base_indent + 2)
+            debug(f"  Depth {depth}: Content at {i}: -> {indents[i]}")
+
+        # Detect nested CASE
+        if re.match(r"(^CASE$|.*\bCASE\b$)", upper) and not upper.startswith("END"):
+            debug(f"  Depth {depth}: Nested CASE at {i} -> recursion")
+            i = process_case_block(lines, indents, i, debug, depth + 1, max_depth)
+            continue
+
+        i += 1
+
+    debug(f"[CASE CHILD] Depth {depth}: Warning: reached EOF without END for CASE starting at {start_index}")
+    return i
+
+
+def process_parentheses_block(lines, indents, start_index: int, debug):
+    """Indent content inside parentheses by +1 until closing paren."""
+    depth = 1
+    i = start_index + 1
+    debug(f"[PARENS CHILD] Starting at line {start_index}: {lines[start_index]}")
+    while i < len(lines) and depth > 0:
+        stripped = lines[i].strip()
+        depth += stripped.count("(")
+        depth -= stripped.count(")")
+        if depth <= 0:
+            debug(f"  Stop: closing parenthesis at line {i}")
+            break
+        indents[i] += 1
+        debug(f"  Line {i}: '{stripped}' inside parens -> indent +1")
+        i += 1
+    debug(f"[PARENS CHILD] Completed at line {i}")
+    return i
+
+
+def process_major_clause(lines, indents, start_index, debug):
     """
-    Debug version of single-pass indentation with:
-      - Major clause child
-      - Parentheses child
-      - CASE WHEN special indentation rules
+    Indent all lines inside a major clause until:
+    - Another top-level major clause at the same depth
+    - A semicolon
+    - A closing parenthesis that reduces depth below the starting level
+
+    Special handling for SELECT:
+    - Non-comma lines inside SELECT are indented by +1.
+    (CASE WHEN blocks are handled separately by process_case_block)
+    """
+    clause_type = lines[start_index].strip().upper().split()[0]
+    clause_base_depth = compute_depth_up_to(lines, start_index - 1)
+
+    debug(f"[MAJOR CLAUSE CHILD] Starting at line {start_index}: {lines[start_index]} "
+          f"(baseline depth={clause_base_depth})")
+
+    i = start_index + 1
+    while i < len(lines):
+        stripped = lines[i].strip()
+        if not stripped:
+            i += 1
+            continue
+
+        # Depth before and after current line
+        depth_before = compute_depth_up_to(lines, i - 1)
+        depth_after = depth_before + lines[i].count("(") - lines[i].count(")")
+        relative_before = depth_before - clause_base_depth
+        relative_after = depth_after - clause_base_depth
+
+        # Stop conditions
+        if stripped.startswith(";"):
+            debug(f"  Stop: semicolon at line {i}")
+            break
+        if starts_with_major_clause(stripped) and relative_before == 0:
+            debug(f"  Stop: another major clause at same level at line {i}")
+            break
+        if relative_after < 0:
+            debug(f"  Stop: depth decreased beyond baseline at line {i}")
+            break
+
+        # --- Indentation rules ---
+        extra_select_indent = 0
+        if clause_type == "SELECT":
+            # Only add +1 if it's not a comma-prefixed column
+            if not stripped.startswith(","):
+                extra_select_indent = 1
+
+        # Apply final indentation
+        indents[i] += 1 + extra_select_indent
+        debug(f"  Line {i}: '{stripped}' "
+              f"depth_before={depth_before} relative={relative_before} -> indent +{1 + extra_select_indent}")
+        i += 1
+
+    debug(f"[MAJOR CLAUSE CHILD] Completed at line {i}")
+    return i
+
+
+def indent_sql_with_children(sql: str, debug_verbose: bool = False) -> str:
+    """
+    Apply indentation:
+      - Parentheses content +1
+      - Major clause content +1 (SELECT gets special handling)
+      - Nested CASE WHEN rules
     """
     lines = sql.splitlines()
     indents = [0] * len(lines)
+    debug = (lambda msg: print(msg)) if debug_verbose else (lambda msg: None)
 
-    def compute_depth_up_to(index):
-        depth = 0
-        for j in range(index + 1):
-            depth += lines[j].count("(")
-            depth -= lines[j].count(")")
-        return depth
-
-    def is_case_start(line):
-        return re.search(r"\bCASE\b", line, re.IGNORECASE)
-
-    def is_case_end(line):
-        return re.search(r"\bEND\b", line, re.IGNORECASE)
-
-    def apply_case_when_rules(line, in_case_block):
-        upper = line.upper().strip()
-        extra_indent = 0
-        if in_case_block:
-            if upper.startswith("WHEN "):
-                extra_indent = 1
-            elif upper.startswith("THEN") or upper.startswith("ELSE"):
-                extra_indent = 2
-            elif upper.startswith("AND ") or upper.startswith("OR "):
-                extra_indent = 1
-            elif upper.startswith("END"):
-                extra_indent = 1
-        return extra_indent
-
-    def process_major_clause(start_index, paren_adjust=False):
-        start_depth = compute_depth_up_to(start_index - 1)
-        stop_threshold = start_depth - 1 if paren_adjust else start_depth
-        print(f"\n[MAJOR CLAUSE CHILD] Starting at line {start_index}: {lines[start_index].strip()} "
-              f"(start_depth={start_depth}, stop_threshold={stop_threshold})")
-        time.sleep(delay)
-
-        in_case_block = False
-        case_depth = None
-
-        i = start_index + 1
-        while i < len(lines):
-            stripped = lines[i].strip()
-            depth_before = compute_depth_up_to(i - 1)
-            depth_after = depth_before + lines[i].count("(") - lines[i].count(")")
-
-            print(f"  Line {i}: {stripped} (depth_before={depth_before}, depth_after={depth_after})")
-
-            # --- CASE WHEN context tracking ---
-            if is_case_start(stripped) and not in_case_block:
-                in_case_block = True
-                case_depth = depth_before
-                print(f"    Entering CASE block (case_depth={case_depth})")
-
-            if is_case_end(stripped) and in_case_block and depth_before == case_depth:
-                in_case_block = False
-                print(f"    Exiting CASE block")
-
-            # --- Stop conditions ---
-            if stripped.startswith(";"):
-                print(f"    Stop: semicolon encountered.")
-                break
-            if starts_with_major_clause(stripped) and depth_before == start_depth:
-                print(f"    Stop: new major clause at same level as starting clause.")
-                break
-            if depth_after < stop_threshold:
-                print(f"    Stop: depth decreased below threshold ({stop_threshold}).")
-                break
-
-            # --- CASE WHEN rules ---
-            extra_indent = apply_case_when_rules(stripped, in_case_block)
-            if extra_indent:
-                print(f"    CASE WHEN rule applied: +{extra_indent}")
-
-            # --- Apply indentation ---
-            indents[i] += 1 + extra_indent
-            print(f"    Indent applied (+{1 + extra_indent}) because inside major clause block.")
-            time.sleep(delay)
-            i += 1
-
-        print(f"[MAJOR CLAUSE CHILD] Completed at line {i}")
-        return i
-
-    def process_parentheses_block(start_index):
-        print(f"\n[PARENS CHILD] Starting at line {start_index}: {lines[start_index].strip()}")
-        time.sleep(delay)
-        depth = 1
-        i = start_index + 1
-        while i < len(lines) and depth > 0:
-            stripped = lines[i].strip()
-            depth += stripped.count("(")
-            depth -= stripped.count(")")
-            if depth <= 0:
-                print(f"  Line {i}: {stripped} (paren depth={depth})")
-                print(f"    Stop: closing parenthesis found, do not indent this line.")
-                break
-            print(f"  Line {i}: {stripped} (paren depth={depth})")
-            indents[i] += 1
-            print(f"    Indent applied (+1) because inside parentheses block.")
-            time.sleep(delay)
-            i += 1
-        print(f"[PARENS CHILD] Completed at line {i}")
-        return i
-
-    # === Main single-pass ===
     i = 0
     while i < len(lines):
         stripped = lines[i].strip()
-        print(f"\n[MAIN] Line {i}: {stripped}")
-        time.sleep(delay)
-
+        upper = stripped.upper()
         if not stripped:
-            print(f"  Skip: blank line")
             i += 1
             continue
 
         paren_trigger = stripped.endswith("(")
         major_trigger = starts_with_major_clause(stripped)
+        case_trigger = upper.endswith("CASE")
 
+        # CASE WHEN child
+        if case_trigger:
+            debug(f"[MAIN] Line {i}: '{stripped}' -> CASE detected (depth=0) → launching child")
+            i = process_case_block(lines, indents, i, debug, depth=0)
+            continue
+        
+        # Parentheses child
         if paren_trigger:
-            print(f"  Parentheses detected → launching child first")
-            process_parentheses_block(i)
-        if major_trigger:
-            print(f"  Major clause detected → launching child second")
-            process_major_clause(i, paren_adjust=paren_trigger)
+            debug(f"[MAIN] Line {i}: '{stripped}' -> Parentheses detected → launching child")
+            process_parentheses_block(lines, indents, i, debug)
 
-        if not paren_trigger and not major_trigger:
-            print(f"  No child triggered → moving to next line")
+        # Major clause child
+        if major_trigger:
+            debug(f"[MAIN] Line {i}: '{stripped}' -> Major clause detected → launching child")
+            process_major_clause(lines, indents, i, debug)
 
         i += 1
 
-    # === Apply indentation ===
-    print("\n[APPLY INDENTATION]")
     output = []
-    for line_index, (line, level) in enumerate(zip(lines, indents)):
-        print(f"Line {line_index}: indent level={level} → {line.strip()}")
-        time.sleep(delay)
-        output.append(("    " * level) + line.strip() if line.strip() else "")
-
-    print("\n[COMPLETE]")
-    return "\n".join(output)
-
-
-
-def indent_sql_with_children(sql: str) -> str:
-    """
-    Perform single-pass indentation with child processes:
-    - Major clause child: indents until next major clause or end
-    - Parentheses child: indents until matching closing parenthesis
-    Lines may be indented by multiple processes (additive).
-    """
-    lines = sql.splitlines()
-    indents = [0] * len(lines)
-
-    def compute_depth(index):
-        """Compute parentheses depth up to a given line index."""
-        depth = 0
-        for i in range(index + 1):
-            depth += lines[i].count("(")
-            depth -= lines[i].count(")")
-        return depth
-
-    def process_major_clause(start_index):
-        """Indent all lines following a major clause."""
-        base_depth = compute_depth(start_index)
-        i = start_index + 1
-        while i < len(lines):
-            stripped = lines[i].strip()
-            depth = compute_depth(i)
-
-            # Stop conditions
-            if starts_with_major_clause(stripped) and depth == base_depth:
-                break
-            if stripped.startswith(";") or depth < base_depth:
-                break
-
-            indents[i] += 1
-            i += 1
-        return i
-
-    def process_parentheses_block(start_index):
-        """Indent everything inside matching parentheses block."""
-        depth = 1
-        i = start_index + 1
-        while i < len(lines) and depth > 0:
-            stripped = lines[i].strip()
-            depth += stripped.count("(")
-            depth -= stripped.count(")")
-            indents[i] += 1
-            i += 1
-        return i
-
-    # === Main single-pass ===
-    i = 0
-    while i < len(lines):
-        stripped = lines[i].strip()
-        if not stripped:
-            i += 1
-            continue
-
-        # Only call one child per line
-        if starts_with_major_clause(stripped):
-            i = process_major_clause(i)
-        elif stripped.endswith("("):
-            i = process_parentheses_block(i)
+    for idx, (line, level) in enumerate(zip(lines, indents)):
+        stripped = line.strip()
+        if stripped:
+            output.append(("    " * level) + stripped)
+            debug(f"[OUTPUT] Line {idx}: level={level} text='{stripped}'")
         else:
-            i += 1
-
-    # === Apply indentation ===
-    output = []
-    for line, level in zip(lines, indents):
-        output.append(("    " * level) + line.strip() if line.strip() else "")
+            output.append("")
+            debug(f"[OUTPUT] Line {idx}: blank line")
 
     return "\n".join(output)
 
@@ -598,7 +549,8 @@ def write_audit_files(filename: Path, pre_sql: str, post_sql: str, post_sql_with
         post_sql_with_comment, encoding="utf-8"
     )
 
-def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) -> str:
+
+def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False, debug_verbose: bool = False) -> str:
     raw_sql = filename.read_text(encoding="utf-8")
     if has_pass1_comment(raw_sql):
         print(f"ℹ️ {filename} already formatted, skipping.")
@@ -625,48 +577,36 @@ def process_sql_file(filename: Path, mirror_audit: bool, debug: bool = False) ->
     formatted = flatten_sql_whitespace(flattened_sql)
     debug_write("flatten", formatted)
 
-    formatted = pad_commas_spacing(formatted)
-    debug_write("commas_padded", formatted)
+    formatted = normalize_operators(formatted)
+    debug_write("format_operators", formatted)
 
     formatted = format_sql_keywords(formatted)
-    debug_write("keywords", formatted)
+    debug_write("newline_keywords", formatted)
 
     formatted = format_sql_commas(formatted)
-    debug_write("commas", formatted)
+    debug_write("newline_commas", formatted)
 
-    formatted = newline_around_semicolons(formatted)
-    debug_write("semicolons", formatted)
+    formatted = format_parentheses(formatted)
+    debug_write("format_parentheses", formatted)
 
-    formatted = newline_after_non_function_parentheses(formatted)
-    debug_write("after_open_paren", formatted)
-
-    formatted = newline_around_non_function_closing_parentheses(formatted)
-    debug_write("around_close_paren", formatted)
-
-    formatted = newline_around_cte_closing_parentheses(formatted)
-    debug_write("cte_close_paren", formatted)
-
-    formatted = normalize_extra_newlines(formatted)
-    debug_write("normalized_newlines", formatted)
-
-    formatted = indent_sql_with_children_debug(formatted)
+    formatted = indent_sql_with_children(formatted, debug_verbose)
     debug_write("indentation", formatted)
-
-    formatted = normalize_commas_spacing(formatted)
-    debug_write("commas_normalized", formatted)
 
     formatted = restore_placeholders(formatted, placeholders)
     debug_write("placeholders_restored", formatted)
     
     restored = ensure_comment_newlines(formatted)
-    debug_write("comment_newlines", restored)
+    debug_write("newline_comments", restored)
 
-    restored_with_comment = insert_pass1_comment(restored)
+    finalized = finalize_newlines(restored)
+    debug_write("finalize_newlines", finalized)
+
+    restored_with_comment = insert_pass1_comment(finalized)
     debug_write("with_version_comment", restored_with_comment)
 
     # Diff check
     pre_flat = flatten_sql_whitespace(raw_sql, True).lower()
-    post_flat = flatten_sql_whitespace(restored, True).lower()
+    post_flat = flatten_sql_whitespace(finalized, True).lower()
     diff_detected = pre_flat != post_flat
 
     # Always write main audit files, passing stage count
@@ -712,25 +652,28 @@ def process_path(path: Path, mirror_audit: bool, debug: bool = False):
         f.write(f"Files with diffs: {len(diffs)}\n")
         for file in diffs: f.write(f"  - {file}\n")
 
+
 def main():
     parser = argparse.ArgumentParser(description="Format SQL files for Pass 1")
     parser.add_argument("path", help="Path to .sql file or directory")
     parser.add_argument("--no-mirror-audit", action="store_true", help="Disable folder hierarchy mirroring in audit")
     parser.add_argument("--debug", action="store_true", help="Output intermediate audit files for each formatting step")
+    parser.add_argument("--debug_verbose", action="store_true", help="Enable verbose debug output for indentation and processing steps")
     args = parser.parse_args()
 
     path = Path(args.path).resolve()
     mirror_audit = not args.no_mirror_audit
     debug = args.debug
+    debug_verbose = args.debug_verbose
 
     if not path.exists():
         print(f"Path does not exist: {path}")
         return
     if path.is_file() and path.suffix == ".sql":
-        process_sql_file(path, mirror_audit, debug)
+        process_sql_file(path, mirror_audit, debug, debug_verbose)
     else:
         for file in path.rglob("*.sql"):
-            process_sql_file(file, mirror_audit, debug)
+            process_sql_file(file, mirror_audit, debug, debug_verbose)
 
     gc.collect()  # Clean up memory after processing
 

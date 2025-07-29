@@ -1,6 +1,7 @@
 # Get the repo name from the current directory
 $repoName = "sql_format_tool"
 $venvPath = Join-Path -Path "." -ChildPath "venv\$repoName"
+$requirementsFile = "sql_format_tool\resources\requirements.txt"
 
 # Get PYTHON_PATH from the environment variables
 $pythonPath = $env:PYTHON_PATH
@@ -29,7 +30,7 @@ if (Test-Path -Path $activateScript) {
 }
 
 # Install requirements
-$requirementsFile = "sql_format_tool\scripts\requirements.txt"
+
 if (Test-Path -Path $requirementsFile) {    
     pip install -r $requirementsFile
     Write-Host "Requirements installed from $requirementsFile"

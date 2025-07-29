@@ -1,0 +1,4167 @@
+[
+  {
+    "name": "ABS",
+    "summary": "Returns the absolute value of a numeric expression.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ACOS",
+    "summary": "Computes the inverse cosine (arc cosine) of its input; the result is a number in the interval[0,pi].",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ACOSH",
+    "summary": "Computes the inverse (arc) hyperbolic cosine of its input.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ADD_MONTHS",
+    "summary": "Adds or subtracts a specified number of months to a date or timestamp, preserving the end-of-month information.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "AI_AGG",
+    "summary": "Reduces a column of text data using a natural language task description.",
+    "category": "Aggregate functions,String & binary functions"
+  },
+  {
+    "name": "AI_CLASSIFY",
+    "summary": "Classifies text or images into categories that you specify.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_COMPLETE (PROMPT OBJECT)",
+    "summary": "Generates a response (completion) for a prompt object.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_COMPLETE (SINGLE IMAGE)",
+    "summary": "Generates a response (completion) for a text prompt using a supported language model.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_COMPLETE (SINGLE STRING)",
+    "summary": "Generates a response (completion) for a text prompt using a supported language model.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_COMPLETE",
+    "summary": "Generates a response (completion) using a supported language model.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_EMBED",
+    "summary": "Creates an embedding vector from text or an image.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_FILTER",
+    "summary": "Classifies free-form prompt inputs into a boolean.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_SENTIMENT",
+    "summary": "Returns overall and categorysentimentin the given input text.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "AI_SIMILARITY",
+    "summary": "Computes a similarity score based on the vector cosine similarity value of the inputs\u2019 embedding vectors.",
+    "category": ""
+  },
+  {
+    "name": "AI_SUMMARIZE_AGG",
+    "summary": "Summarizes a column of text data.",
+    "category": "Aggregate functions,String & binary functions"
+  },
+  {
+    "name": "ALERT_HISTORY",
+    "summary": "This INFORMATION_SCHEMA table function can be used to query the history ofalertswithin a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "ALL_USER_NAMES",
+    "summary": "Returns all user names in the current account.",
+    "category": "Context functions"
+  },
+  {
+    "name": "ANY_VALUE",
+    "summary": "Returns some value of the expression from the group.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "APPLICATION_JSON",
+    "summary": "Returns a JSON object that specifies the JSON message to use for a notification.",
+    "category": "Notification functions"
+  },
+  {
+    "name": "APPROX_COUNT_DISTINCT",
+    "summary": "Uses HyperLogLog to return an approximation of the distinct cardinality of the input (i.e.HLL(col1,col2,...)returns an approximation ofCOUNT(DISTINCTcol1,col2,...)).",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "APPROX_PERCENTILE",
+    "summary": "Returns an approximated value for the desired percentile (that is, if columnchasnnumbers, APPROX_PERCENTILE(c, p) returns a number such that approximatelyn*pof the numbers incare smaller than the returned number).",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "APPROX_PERCENTILE_ACCUMULATE",
+    "summary": "Returns the internal representation of the t-Digest state (as a JSON object) at the end of aggregation.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "APPROX_PERCENTILE_COMBINE",
+    "summary": "Combines (merges) percentile input states into a single output state.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "APPROX_PERCENTILE_ESTIMATE",
+    "summary": "Returns the desired approximated percentile value for the specified t-Digest state.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "APPROX_TOP_K",
+    "summary": "Uses Space-Saving to return an approximation of the most frequent values in the input, along with their approximate frequencies.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "APPROX_TOP_K_ACCUMULATE",
+    "summary": "Returns the Space-Saving summary at the end of aggregation.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "APPROX_TOP_K_COMBINE",
+    "summary": "Combines (merges) input states into a single output state.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "APPROX_TOP_K_ESTIMATE",
+    "summary": "Returns the approximate most frequent values and their estimated frequency for the given Space-Saving state.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "APPROXIMATE_JACCARD_INDEX",
+    "summary": "Returns an estimation of the similarity (Jaccard index) of inputs based on their MinHash states.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "APPROXIMATE_SIMILARITY",
+    "summary": "Returns an estimation of the similarity (Jaccard index) of inputs based on their MinHash states.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "ARRAY_AGG",
+    "summary": "Returns the input values, pivoted into an array.",
+    "category": "Aggregate functions,Window functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_APPEND",
+    "summary": "Returns an array containing all elements from the source array as well as the new element.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_CAT",
+    "summary": "Returns a concatenation of two arrays.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_COMPACT",
+    "summary": "Returns a compacted array with missing and null values removed, effectively converting sparse arrays into dense arrays.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_CONSTRUCT",
+    "summary": "Returns an array constructed from zero, one, or more inputs.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_CONSTRUCT_COMPACT",
+    "summary": "Returns an array constructed from zero, one, or more inputs; the constructed array omits any NULL input values.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_CONTAINS",
+    "summary": "Returns TRUE if the specified value is found in the specified array.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_DISTINCT",
+    "summary": "Returns a newARRAYthat contains only the distinct elements from the input ARRAY.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_EXCEPT",
+    "summary": "Returns a newARRAYthat contains the elements from one input ARRAY that are not in another input ARRAY.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_FLATTEN",
+    "summary": "Flattens anARRAYof ARRAYs into a single ARRAY.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_GENERATE_RANGE",
+    "summary": "Returns anARRAYof integer values within a specified range (e.g.[2,3,4]).",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_INSERT",
+    "summary": "Returns an array containing all elements from the source array as well as the new element.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_INTERSECTION",
+    "summary": "Returns an array that contains the matching elements in the two input arrays.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_MAX",
+    "summary": "Given an inputARRAY, returns the element with the highest value that is not a SQL NULL.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_MIN",
+    "summary": "Given an inputARRAY, returns the element with the lowest value that is not a SQL NULL.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_POSITION",
+    "summary": "Returns the index of the first occurrence of an element in an array.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_PREPEND",
+    "summary": "Returns an array containing the new element as well as all elements from the source array.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_REMOVE",
+    "summary": "Given a sourceARRAY, returns an ARRAY with elements of the specified value removed.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_REMOVE_AT",
+    "summary": "Given a sourceARRAY, returns an ARRAY with the element at the specified position removed.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_REVERSE",
+    "summary": "Returns anarraywith the elements of the input array in reverse order.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_SIZE",
+    "summary": "Returns the size of the input array.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_SLICE",
+    "summary": "Returns an array constructed from a specified subset of elements of the input array.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_SORT",
+    "summary": "Returns anARRAYthat contains the elements of the input ARRAY sorted in ascending or descending order.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_TO_STRING",
+    "summary": "Returns an input array converted to a string by casting all values to strings (usingTO_VARCHAR) and concatenating them (using the string from the second argument to separate the elements).",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAY_UNION_AGG",
+    "summary": "Returns anARRAYthat contains the union of the distinct values from the input ARRAYs in a column.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "ARRAY_UNIQUE_AGG",
+    "summary": "Returns anARRAYthat contains all of the distinct values from the specified column.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "ARRAYS_OVERLAP",
+    "summary": "Compares whether two arrays have at least one element in common.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAYS_TO_OBJECT",
+    "summary": "Returns anOBJECTthat contains the keys specified by one inputARRAYand the values specified by another input ARRAY.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ARRAYS_ZIP",
+    "summary": "Returns anarrayofobjects, each of which contains key-value pairs for an nth element in the input arrays.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_<OBJECT_TYPE>",
+    "summary": "You can use this family of functions to perform strict casting of VARIANT values to values of other data types.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_ARRAY",
+    "summary": "Casts aVARIANTvalue to anARRAYvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_BINARY",
+    "summary": "Casts aVARIANTvalue to aBINARYvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_BOOLEAN",
+    "summary": "Casts aVARIANTvalue to aBOOLEANvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_CHAR , AS_VARCHAR",
+    "summary": "Casts aVARIANTvalue to aVARCHARvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_DATE",
+    "summary": "Casts aVARIANTvalue to aDATEvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_DECIMAL , AS_NUMBER",
+    "summary": "Casts aVARIANTvalue to a fixed-pointNUMBERvalue, with optional precision and scale.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_DOUBLE , AS_REAL",
+    "summary": "Casts aVARIANTvalue to afloating-point value.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_INTEGER",
+    "summary": "Casts aVARIANTvalue to anINTEGER.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_OBJECT",
+    "summary": "Casts aVARIANTvalue to anOBJECTvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_TIME",
+    "summary": "Casts aVARIANTvalue to aTIMEvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "AS_TIMESTAMP_*",
+    "summary": "Casts aVARIANTvalue to the respectivetimestampvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "ASCII",
+    "summary": "Returns the ASCII code for the first character of a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "ASIN",
+    "summary": "Computes the inverse sine (arc sine) of its argument; the result is a number in the interval[-pi/2,pi/2].",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ASINH",
+    "summary": "Computes the inverse (arc) hyperbolic sine of its argument.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ATAN",
+    "summary": "Computes the inverse tangent (arc tangent) of its argument; the result is a number in the interval[-pi,pi].",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ATAN2",
+    "summary": "Computes the inverse tangent (arc tangent) of the ratio of its two arguments.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ATANH",
+    "summary": "Computes the inverse (arc) hyperbolic tangent of its argument.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "AUTO_REFRESH_REGISTRATION_HISTORY",
+    "summary": "This table function can be used to query the history of data files registered in the metadata for a specified external table or directory table and the credits billed for these operations.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "AUTOMATIC_CLUSTERING_HISTORY",
+    "summary": "This table function is used for querying theAutomatic Clusteringhistory for given tables within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "AVAILABLE_LISTING_REFRESH_HISTORY",
+    "summary": "Returns the past 14 days of refresh history for an available listing or a database mounted from a listing using cross-cloud auto-fulfillment.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "AVG",
+    "summary": "Returns the average of non-NULL records.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "BASE64_DECODE_BINARY",
+    "summary": "Decodes a Base64-encoded string to a binary.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "BASE64_DECODE_STRING",
+    "summary": "Decodes a Base64-encoded string to a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "BASE64_ENCODE",
+    "summary": "Encodes the input (string or binary) using Base64 encoding.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "[ NOT ] BETWEEN",
+    "summary": "ReturnsTRUEwhen the input expression (numeric or string) is within the specified lower and upper boundary.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "BIT_LENGTH",
+    "summary": "Returns the length of a string or binary value in bits.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "BITAND",
+    "summary": "Returns the bitwise AND of two numeric or binary expressions.",
+    "category": "Bitwise expression functions"
+  },
+  {
+    "name": "BITAND_AGG",
+    "summary": "Returns the bitwise AND value of all non-NULL numeric records in a group.",
+    "category": "Aggregate functions,Window functions,Bitwise expression functions"
+  },
+  {
+    "name": "BITMAP_BIT_POSITION",
+    "summary": "Given a numeric value, returns the relative position for the bit that represents that value in a bitmap.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "BITMAP_BUCKET_NUMBER",
+    "summary": "Given a numeric value, returns an identifier (\u201cbucket number\u201d) for the bitmap containing the bit that represents the value..",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "BITMAP_CONSTRUCT_AGG",
+    "summary": "Returns a bitmap with bits set for each distinct value in a group.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "BITMAP_COUNT",
+    "summary": "Given a bitmap that represents the set of distinct values for a column, returns the number of distinct value.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "BITMAP_OR_AGG",
+    "summary": "Returns a bitmap containing the results of a binary OR operation on the input bitmaps.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "BITNOT",
+    "summary": "Returns the bitwise negation of a numeric or binary expression.",
+    "category": "Bitwise expression functions"
+  },
+  {
+    "name": "BITOR",
+    "summary": "Returns the bitwise OR of two numeric or binary expressions.",
+    "category": "Bitwise expression functions"
+  },
+  {
+    "name": "BITOR_AGG",
+    "summary": "Returns the bitwise OR value of all non-NULL numeric records in a group.",
+    "category": "Aggregate functions,Window functions,Bitwise expression functions"
+  },
+  {
+    "name": "BITSHIFTLEFT",
+    "summary": "Shifts the bits for a numeric or binary expressionnpositions to the left.",
+    "category": "Bitwise expression functions"
+  },
+  {
+    "name": "BITSHIFTRIGHT",
+    "summary": "Shifts the bits for a numeric or binary expressionnpositions to the right.",
+    "category": "Bitwise expression functions"
+  },
+  {
+    "name": "BITXOR",
+    "summary": "Returns the bitwise XOR of two numeric or binary expressions.",
+    "category": "Bitwise expression functions"
+  },
+  {
+    "name": "BITXOR_AGG",
+    "summary": "Returns the bitwise XOR value of all non-NULL numeric records in a group.",
+    "category": "Aggregate functions,Window functions,Bitwise expression functions"
+  },
+  {
+    "name": "BOOLAND",
+    "summary": "Computes the Boolean AND of two numeric expressions.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "BOOLAND_AGG",
+    "summary": "Returns TRUE if all non-NULL Boolean records in a group evaluate to TRUE.",
+    "category": "Aggregate functions,Window functions,Conditional expression functions"
+  },
+  {
+    "name": "BOOLNOT",
+    "summary": "Computes the Boolean NOT of a single numeric expression.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "BOOLOR",
+    "summary": "Computes the Boolean OR of two numeric expressions.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "BOOLOR_AGG",
+    "summary": "Returns TRUE if at least one Boolean record in a group evaluates to TRUE.",
+    "category": "Aggregate functions,Window functions,Conditional expression functions"
+  },
+  {
+    "name": "BOOLXOR",
+    "summary": "Computes the Boolean XOR of two numeric expressions (i.e. one of the expressions, but not both expressions, is TRUE).",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "BOOLXOR_AGG",
+    "summary": "Returns TRUE if exactly one Boolean record in the group evaluates to TRUE.",
+    "category": "Aggregate functions,Window functions,Conditional expression functions"
+  },
+  {
+    "name": "BUILD_SCOPED_FILE_URL",
+    "summary": "Generates a scoped Snowflake file URL to a staged file using the stage name and relative file path as inputs.",
+    "category": "File functions"
+  },
+  {
+    "name": "BUILD_STAGE_FILE_URL",
+    "summary": "Generates a Snowflakefile URLto a staged file using the stage name and relative file path as inputs.",
+    "category": "File functions"
+  },
+  {
+    "name": "CASE",
+    "summary": "Works like a cascading \u201cif-then-else\u201d statement.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "CAST , ::",
+    "summary": "Converts a value of one data type into another data type.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "CBRT",
+    "summary": "Returns the cubic root of a numeric expression.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "CEIL",
+    "summary": "Returns values frominput_exprrounded to the nearest equal or larger integer, or to the nearest equal or larger value with the specified number of places after the decimal point.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "CHARINDEX",
+    "summary": "Searches for the first occurrence of the first argument in the second argument and, if successful, returns the position (1-based) of the first argument in the second argument.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "CHECK_JSON",
+    "summary": "Checks the validity of a JSON document.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "CHECK_XML",
+    "summary": "Checks the validity of anXMLdocument.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "CHR , CHAR",
+    "summary": "Converts a Unicode code point (including 7-bit ASCII) into the character that matches the input Unicode.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "CLASSIFY_TEXT (SNOWFLAKE.CORTEX)",
+    "summary": "Classifies free-form text into categories that you provide.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "COALESCE",
+    "summary": "Returns the first non-NULL expression among its arguments, or NULL if all its arguments are NULL.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "COLLATE",
+    "summary": "Returns a copy of the original string, but with the specifiedcollation_specificationproperty instead of the originalcollation_specificationproperty.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "COLLATION",
+    "summary": "Returns the collation specification of the expression.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "COMPLETE (SNOWFLAKE.CORTEX) (MULTIMODAL)",
+    "summary": "Given an image and a prompt, generates a response (completion) using a language model.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "COMPLETE (SNOWFLAKE.CORTEX)",
+    "summary": "Given a prompt, generates a response (completion) using your choice of supported language model.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "COMPLETE_TASK_GRAPHS",
+    "summary": "Returns the status of a completedgraphrun.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "COMPRESS",
+    "summary": "Compresses the input string or binary value with a compression method.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "CONCAT , ||",
+    "summary": "Concatenates one or more strings, or concatenates one or more binary values.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "CONCAT_WS",
+    "summary": "Concatenates two or more strings, or concatenates two or more binary values.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "CONDITIONAL_CHANGE_EVENT",
+    "summary": "Returns a window event number for each row within a window partition when the value of the argumentexpr1in the current row is different from the value ofexpr1in the previous row.",
+    "category": "Window functions"
+  },
+  {
+    "name": "CONDITIONAL_TRUE_EVENT",
+    "summary": "Returns a window event number for each row within a window partition based on the result of the boolean argumentexpr1.",
+    "category": "Window functions"
+  },
+  {
+    "name": "CONTAINS",
+    "summary": "Returns true ifexpr1containsexpr2.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "CONVERT_TIMEZONE",
+    "summary": "Converts a timestamp to another time zone.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "COPY_HISTORY",
+    "summary": "This table function can be used to query Snowflake data loading history along various dimensions within the last 14 days.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "CORR",
+    "summary": "Returns the correlation coefficient for non-null pairs in a group.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "CORTEX_SEARCH_DATA_SCAN",
+    "summary": "This table function returns the data indexed by aCortex Search service, including the columns defined in the source query and the computed vector embeddings for the search column.",
+    "category": "Table functions"
+  },
+  {
+    "name": "COS",
+    "summary": "Computes the cosine of its argument; the argument should be expressed in radians.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "COSH",
+    "summary": "Computes the hyperbolic cosine of its argument.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "COT",
+    "summary": "Computes the cotangent of its argument; the argument should be expressed in radians.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "COUNT",
+    "summary": "Returns either the number of non-NULL records for the specified columns, or the total number of records.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "COUNT_IF",
+    "summary": "Returns the number of records that satisfy a condition or NULL if no records satisfy the condition.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "COUNT_TOKENS (SNOWFLAKE.CORTEX)",
+    "summary": "Returns the number of tokens in a prompt for the large language model or the task-specific function specified in the argument.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "COVAR_POP",
+    "summary": "Returns the population covariance for non-null pairs in a group.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "COVAR_SAMP",
+    "summary": "Returns the sample covariance for non-null pairs in a group.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "CUME_DIST",
+    "summary": "Finds the cumulative distribution of a value with regard to other values within the same window partition.",
+    "category": "Window functions"
+  },
+  {
+    "name": "CUMULATIVE_PRIVACY_LOSSES",
+    "summary": "Returns the privacy budgets associated with a specificprivacy policy.",
+    "category": "Table functions"
+  },
+  {
+    "name": "CURRENT_ACCOUNT",
+    "summary": "Returns theaccount locatorused by the user\u2019s current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_ACCOUNT_NAME",
+    "summary": "Returns the name of the current account.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_AVAILABLE_ROLES",
+    "summary": "Returns a list of all account-level roles granted to the current user.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_CLIENT",
+    "summary": "Returns the version of the client from which the function was called.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_DATABASE",
+    "summary": "Returns the name of the current database, which varies depending on where you call the function.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_DATE",
+    "summary": "Returns the current date of the system.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_IP_ADDRESS",
+    "summary": "Returns the IP address of the client that submitted the request.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_ORGANIZATION_NAME",
+    "summary": "Returns the name of the organization to which the current account belongs.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_ORGANIZATION_USER",
+    "summary": "Returns the name of the user currently logged into the system, but only if the user is anorganization user.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_REGION",
+    "summary": "Returns the name of the region for the account where the current user is logged in.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_ROLE",
+    "summary": "Returns the name of theprimary rolein use for the current session when the primary role is an account-level role or NULL if the role in use for the current session is a database role.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_ROLE_TYPE",
+    "summary": "Calling the CURRENT_ROLE_TYPE function returnsROLEif the current active (primary) role in the session is an account role.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_SCHEMA",
+    "summary": "Returns the name of the current schema, which varies depending on where you call the function.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_SCHEMAS",
+    "summary": "Returns active search path schemas.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_SECONDARY_ROLES",
+    "summary": "Returns thesecondary rolesin use for the current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_SESSION",
+    "summary": "Returns a unique system identifier for the Snowflake session corresponding to the present connection.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_STATEMENT",
+    "summary": "Returns the SQL text of the statement that is currently executing.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_TASK_GRAPHS",
+    "summary": "Returns the status of agraphrun that is currently scheduled or is executing.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "CURRENT_TIME",
+    "summary": "Returns the current time for the system.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_TIMESTAMP",
+    "summary": "Returns the current timestamp for the system in the local time zone.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_TRANSACTION",
+    "summary": "Returns the transaction id of an open transaction in the current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_USER",
+    "summary": "Returns the name of the user currently logged into the system.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_VERSION",
+    "summary": "Returns the current Snowflake version.",
+    "category": "Context functions"
+  },
+  {
+    "name": "CURRENT_WAREHOUSE",
+    "summary": "Returns the name of the warehouse in use for the current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "DATA_METRIC_FUNCTION_REFERENCES",
+    "summary": "Returns a row for each object that has the specified data metric function assigned to the objectorreturns a row for each data metric function assigned to the specified object.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DATA_QUALITY_MONITORING_RESULTS",
+    "summary": "Returns a row for each data metric function assigned to the specified object, which includes the evaluation result and other metadata of the data metric function on the object.",
+    "category": "LOCAL schema,Table functions"
+  },
+  {
+    "name": "DATA_TRANSFER_HISTORY",
+    "summary": "This table function can be used to query the history of data transferred from Snowflake tables into a different cloud storage provider\u2019s network (i.e. from Snowflake on AWS, Google Cloud Platform, or Microsoft Azure into the other cloud provider\u2019s network) and/or geographical region within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DATABASE_REFRESH_HISTORY",
+    "summary": "Returns the refresh history for a secondary database.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DATABASE_REFRESH_PROGRESS , DATABASE_REFRESH_PROGRESS_BY_JOB",
+    "summary": "The DATABASE_REFRESH_PROGRESS family of functions can be used to query the status of a database refresh along various dimensions.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DATABASE_REPLICATION_USAGE_HISTORY",
+    "summary": "This table function can be used to query the replication history for a specified database within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DATABASE_STORAGE_USAGE_HISTORY",
+    "summary": "This table function can be used to query the average daily storage usage, in bytes, for a single database (or all the databases in your account) within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DATASKETCHES_HLL",
+    "summary": "Returns an approximation of the distinct cardinality of the input (that is,DATASKETCHES_HLL(col1)returns an approximation ofCOUNT(DISTINCTcol1)).",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "DATASKETCHES_HLL_ACCUMULATE",
+    "summary": "Returns the sketch at the end of aggregation.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "DATASKETCHES_HLL_COMBINE",
+    "summary": "Combines (merges) input sketches into a single output sketch.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "DATASKETCHES_HLL_ESTIMATE",
+    "summary": "Returns the cardinality estimate for the given sketch.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "DATE_FROM_PARTS",
+    "summary": "Creates a date from individual numeric components that represent the year, month, and day of the month.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "DATE_PART",
+    "summary": "Extracts the specified date or time part from a date, time, or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "DATE_TRUNC",
+    "summary": "Truncates a DATE, TIME, or TIMESTAMP value to the specified precision.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "DATEADD",
+    "summary": "Adds the specified value for the specified date or time part to a date, time, or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "DATEDIFF",
+    "summary": "Calculates the difference between two date, time, or timestamp expressions based on the date or time part requested.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "DAYNAME",
+    "summary": "Extracts the three-letter day-of-week name from the specified date or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "DECODE",
+    "summary": "Compares the select expression to each search expression in order.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "DECOMPRESS_BINARY",
+    "summary": "Decompresses the compressedBINARYinput parameter.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "DECOMPRESS_STRING",
+    "summary": "Decompresses the compressedBINARYinput parameter to a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "DECRYPT",
+    "summary": "Decrypts a BINARY value using a VARCHAR passphrase.",
+    "category": "Encryption functions"
+  },
+  {
+    "name": "DECRYPT_RAW",
+    "summary": "Decrypts a BINARY value using a BINARY key.",
+    "category": "Encryption functions"
+  },
+  {
+    "name": "DEGREES",
+    "summary": "Converts radians to degrees.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "DENSE_RANK",
+    "summary": "Returns the rank of a value within a group of values, without gaps in the ranks.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "DIV0",
+    "summary": "Performs division like the division operator (/), but returns 0 when the divisor is 0 (rather than reporting an error).",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "DIV0NULL",
+    "summary": "Performs division like the division operator (/), but returns 0 when the divisor is 0 or NULL (rather than reporting an error or returning NULL).",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ACCEPTED_VALUES (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the number of records where the value of a column doesnotmatch a Boolean expression.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "AVG (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the average value for the specified column in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "BLANK_COUNT (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the count of column values that are blank for the specified column in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "BLANK_PERCENT (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the percentage of column values that are blank for the specified column in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "DATA_METRIC_SCHEDULED_TIME (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the timestamp for when a DMF is scheduled to run or the current timestamp if the function is called manually.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "DUPLICATE_COUNT (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the count of column values that have duplicates, including NULL values.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "FRESHNESS (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the difference in seconds between the maximum value of a timestamp column and the scheduled time when the data metric function runs.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "MAX (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the maximum value for the specified column in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "MIN (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the minimum value for the specified column in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "NULL_COUNT (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the total number of NULL values for the specified columns in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "NULL_PERCENT (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the percentage of columns values that are NULL for the specified column in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "ROW_COUNT (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the total number of rows in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "STDDEV (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the standard deviation value for the specified column in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "UNIQUE_COUNT (SYSTEM DATA METRIC FUNCTION)",
+    "summary": "Returns the total number of unique non-NULL values for the specified columns in a table.",
+    "category": "Data metric functions"
+  },
+  {
+    "name": "DP_INTERVAL_HIGH",
+    "summary": "Returns the upper bound of thenoise interval, which is used by differential privacy to help analysts determine how much noise has been introduced into query results.",
+    "category": "Differential privacy functions"
+  },
+  {
+    "name": "DP_INTERVAL_LOW",
+    "summary": "Returns the lower bound of thenoise interval, which is used by differential privacy to help analysts determine how much noise has been introduced into query results.",
+    "category": "Differential privacy functions"
+  },
+  {
+    "name": "DYNAMIC_TABLE_GRAPH_HISTORY",
+    "summary": "This table function returns information on alldynamic tablesin the current account.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DYNAMIC_TABLE_REFRESH_HISTORY",
+    "summary": "This table function returns information about each refresh (completed and running) ofdynamic tables.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "DYNAMIC_TABLES",
+    "summary": "This table function returns metadata aboutdynamic tables, including aggregate lag metrics and the status of the most recent refreshes, within 7 days of the current time.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "EDITDISTANCE",
+    "summary": "Computes the Levenshtein distance between two input strings.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "EMAIL_INTEGRATION_CONFIG",
+    "summary": "Returns a JSON object that specifies the email notification integration, recipients, and subject line to use for an email notification.",
+    "category": "Notification functions"
+  },
+  {
+    "name": "EMBED_TEXT_768 (SNOWFLAKE.CORTEX)",
+    "summary": "Creates a vector embedding of 768 dimensions from English-language text.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "EMBED_TEXT_1024 (SNOWFLAKE.CORTEX)",
+    "summary": "Creates a vector embedding of 1024 dimensions from text.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "ENCRYPT",
+    "summary": "Encrypts a VARCHAR or BINARY value using a VARCHAR passphrase.",
+    "category": "Encryption functions"
+  },
+  {
+    "name": "ENCRYPT_RAW",
+    "summary": "Encrypts a BINARY value using a BINARY key.",
+    "category": "Encryption functions"
+  },
+  {
+    "name": "ENDSWITH",
+    "summary": "Returns TRUE if the first expression ends with the second expression.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "ENTITY_SENTIMENT (SNOWFLAKE.CORTEX)",
+    "summary": "Returns sentiment scores for English-language text, including overall sentiment and specific sentiment for specified entities.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "EQUAL_NULL",
+    "summary": "Compares whether two expressions are equal.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "ESTIMATE_REMAINING_DP_AGGREGATES",
+    "summary": "Returns the estimated number of aggregation functions that can be run before the limit of a privacy budget is reached.",
+    "category": "Differential privacy functions,Table functions"
+  },
+  {
+    "name": "EXP",
+    "summary": "Computes Euler\u2019s numbereraised to a floating-point value.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "EXPLAIN_JSON",
+    "summary": "This function converts an EXPLAIN plan from JSON to a table.",
+    "category": "System functions"
+  },
+  {
+    "name": "EXTERNAL_FUNCTIONS_HISTORY",
+    "summary": "This table function retrieves the history of external functions called by Snowflake for your entire Snowflake account.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "EXTERNAL_TABLE_FILES",
+    "summary": "This table function can be used to query information about the staged data files included in the metadata for a specifiedexternal table.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "EXTERNAL_TABLE_FILE_REGISTRATION_HISTORY",
+    "summary": "This table function can be used to query information about the metadata history for an external table.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "EXTRACT",
+    "summary": "Extracts the specified date or time part from a date, time, or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "EXTRACT_ANSWER (SNOWFLAKE.CORTEX)",
+    "summary": "Extracts an answer to a given question from a text document.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "EXTRACT_SEMANTIC_CATEGORIES",
+    "summary": "Returns a set of categories (semantic and privacy) for each supported column in the specified table or view.",
+    "category": "System functions"
+  },
+  {
+    "name": "FACTORIAL",
+    "summary": "Computes the factorial of its input.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "FILTER",
+    "summary": "Filters anarraybased on the logic in a lambda expression.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "FINETUNE ('CANCEL') (SNOWFLAKE.CORTEX)",
+    "summary": "Cancels the specified fine-tuning job from the current schema.",
+    "category": ""
+  },
+  {
+    "name": "FINETUNE ('CREATE') (SNOWFLAKE.CORTEX)",
+    "summary": "Creates a fine-tuning job.",
+    "category": ""
+  },
+  {
+    "name": "FINETUNE ('DESCRIBE') (SNOWFLAKE.CORTEX)",
+    "summary": "Describes the properties of a fine-tuning job.",
+    "category": ""
+  },
+  {
+    "name": "FINETUNE ('SHOW') (SNOWFLAKE.CORTEX)",
+    "summary": "Lists all the fine-tuning jobs in the current account.",
+    "category": ""
+  },
+  {
+    "name": "FINETUNE (SNOWFLAKE.CORTEX)",
+    "summary": "This function lets you create and manage large language models customized for your specific task.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "FIRST_VALUE",
+    "summary": "Returns the first value within an ordered group of values.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "FL_GET_CONTENT_TYPE",
+    "summary": "Returns the content type (also known as the MIME type) of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_ETAG",
+    "summary": "Returns the content hash (ETAG) of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_FILE_TYPE",
+    "summary": "Returns the file type (modality) of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_LAST_MODIFIED",
+    "summary": "Returns the last modified date of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_RELATIVE_PATH",
+    "summary": "Returns the relative path of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_SCOPED_FILE_URL",
+    "summary": "Returns the scoped URL of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_SIZE",
+    "summary": "Returns the size, in bytes, of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_STAGE",
+    "summary": "Returns the stage name of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_GET_STAGE_FILE_URL",
+    "summary": "Returns the stage URL of aFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_IS_AUDIO",
+    "summary": "Checks if the input is an audioFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_IS_COMPRESSED",
+    "summary": "Checks if the input is a compressedFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_IS_DOCUMENT",
+    "summary": "Checks if the input is a documentFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_IS_IMAGE",
+    "summary": "Checks if the input is an imageFILE.",
+    "category": ""
+  },
+  {
+    "name": "FL_IS_VIDEO",
+    "summary": "Checks if the input is a videoFILE.",
+    "category": ""
+  },
+  {
+    "name": "FLATTEN",
+    "summary": "Flattens (explodes) compound values into multiple rows.",
+    "category": "Table functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "FLOOR",
+    "summary": "Returns values frominput_exprrounded to the nearest equal or smaller integer, or to the nearest equal or smaller value with the specified number of places after the decimal point.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "GENERATE_COLUMN_DESCRIPTION",
+    "summary": "Generates a list of columns from a set of staged files that contain semi-structured data using theINFER_SCHEMAfunction output.",
+    "category": "Metadata functions"
+  },
+  {
+    "name": "GENERATOR",
+    "summary": "Creates rows of data based either on a specified number of rows, a specified generation period (in seconds), or both.",
+    "category": "Table functions"
+  },
+  {
+    "name": "GET",
+    "summary": "Extracts a value from anARRAYor anOBJECT(or aVARIANTthat contains an ARRAY or OBJECT).",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "GET_ABSOLUTE_PATH",
+    "summary": "Retrieves the absolute path of a staged file using the stage name and path of the file relative to its location in the stage as inputs.",
+    "category": "File functions"
+  },
+  {
+    "name": "GET_ANACONDA_PACKAGES_REPODATA",
+    "summary": "Returns a list of third-party packages that are available from Anaconda.",
+    "category": "System functions"
+  },
+  {
+    "name": "GET_CONDITION_QUERY_UUID",
+    "summary": "Returns the query ID for the SQL statement executed for the condition of analert.",
+    "category": "Context functions"
+  },
+  {
+    "name": "GET_CONTACTS",
+    "summary": "Returns thecontactsassociated with an object.",
+    "category": "Table functions"
+  },
+  {
+    "name": "GET_DDL",
+    "summary": "Returns a DDL statement that can be used to recreate the specified object.",
+    "category": "Metadata functions"
+  },
+  {
+    "name": "GET_IGNORE_CASE",
+    "summary": "Extracts a field value from an object; returns NULL if either of the arguments is NULL.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "GET_JOB_HISTORY",
+    "summary": "Returns the job history forSnowpark Container Services jobsthat ran within the specified time range.",
+    "category": "Table functions"
+  },
+  {
+    "name": "GET_LINEAGE (SNOWFLAKE.CORE)",
+    "summary": "Given a Snowflake object, returns data lineage information upstream or downstream from that object.",
+    "category": "Table functions"
+  },
+  {
+    "name": "GET_OBJECT_REFERENCES",
+    "summary": "Returns a list of objects that a specified object references.",
+    "category": "Table functions"
+  },
+  {
+    "name": "GET_PATH , :",
+    "summary": "Extracts a value from semi-structured data using a path name.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "GET_PRESIGNED_URL",
+    "summary": "Generates a pre-signed URL to a file on a stage using the stage name and relative file path as inputs.",
+    "category": "File functions"
+  },
+  {
+    "name": "GET_PYTHON_PROFILER_OUTPUT (SNOWFLAKE.CORE)",
+    "summary": "Returns output containing a report generated by thePython code profiler.",
+    "category": "System functions"
+  },
+  {
+    "name": "GET_QUERY_OPERATOR_STATS",
+    "summary": "Returns statistics about individual query operators within a query that has completed.",
+    "category": "System functions,Table functions"
+  },
+  {
+    "name": "GET_RELATIVE_PATH",
+    "summary": "Extracts the path of a staged file relative to its location in the stage using the stage name and absolute file path in cloud storage as inputs.",
+    "category": "File functions"
+  },
+  {
+    "name": "GET_STAGE_LOCATION",
+    "summary": "Retrieves the URL for an external or internal named stage using the stage name as the input.",
+    "category": "File functions"
+  },
+  {
+    "name": "GETBIT",
+    "summary": "Given an INTEGER value, returns the value of a bit at a specified position.",
+    "category": "Bitwise expression functions"
+  },
+  {
+    "name": "GETDATE",
+    "summary": "Returns the current timestamp for the system in the local time zone.",
+    "category": "Context functions"
+  },
+  {
+    "name": "GETVARIABLE",
+    "summary": "Returns the value associated with a SQL variable name.",
+    "category": "Context functions"
+  },
+  {
+    "name": "GREATEST",
+    "summary": "Returns the largest value from a list of expressions.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "GREATEST_IGNORE_NULLS",
+    "summary": "Returns the largest non-NULL value from a list of expressions.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "GROUPING",
+    "summary": "Describes which of a list of expressions are grouped in a row produced by aGROUP BYquery.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "GROUPING_ID",
+    "summary": "Describes which of a list of expressions are grouped in a row produced by aGROUP BYquery.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "H3_CELL_TO_BOUNDARY",
+    "summary": "Returns theGEOGRAPHYobject representing the boundary of anH3cell.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_CELL_TO_CHILDREN",
+    "summary": "Returns anarrayof the INTEGER IDs of the children of anH3cell for a given resolution.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_CELL_TO_CHILDREN_STRING",
+    "summary": "Returns anarrayof the VARCHAR values containing the hexadecimal IDs of the children of anH3cell for a given resolution.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_CELL_TO_PARENT",
+    "summary": "Returns the ID of the parent of anH3cell for a given resolution.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_CELL_TO_POINT",
+    "summary": "Returns theGEOGRAPHYobject representing the Point that is the centroid of anH3cell.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_COMPACT_CELLS",
+    "summary": "Returns anarrayofVARIANTvalues that contain the INTEGER IDs of fewer, largerH3cells that cover the same area as the H3 cells in the input.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_COMPACT_CELLS_STRINGS",
+    "summary": "Returns anarrayofVARIANTvalues that contain the VARCHAR hexadecimal IDs of fewer, largerH3cells that cover the same area as the H3 cells in the input.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_COVERAGE",
+    "summary": "Returns anarrayof IDs (as INTEGER values) identifying the minimal set ofH3cells that completely cover a shape (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_COVERAGE_STRINGS",
+    "summary": "Returns anarrayof hexadecimal IDs (as VARCHAR values) identifying the minimal set ofH3cells that completely cover a shape (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_GET_RESOLUTION",
+    "summary": "Returns the resolution of anH3cell.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_GRID_DISK",
+    "summary": "Returns anarrayof the IDs of theH3cells that are within the k-distance from the specified cell.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_GRID_DISTANCE",
+    "summary": "Returns the distance between twoH3cells specified by their IDs.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_GRID_PATH",
+    "summary": "Returns anarrayof the IDs of theH3cells that represent the line between two cells.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_INT_TO_STRING",
+    "summary": "Converts the INTEGER value of anH3cell ID to hexadecimal format.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_IS_PENTAGON",
+    "summary": "Returns TRUE if the boundary of anH3cell represents a pentagon.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_IS_VALID_CELL",
+    "summary": "Returns TRUE if the input represents a validH3cell.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_LATLNG_TO_CELL",
+    "summary": "Returns the INTEGER value of theH3cell ID for a given latitude, longitude, and resolution.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_LATLNG_TO_CELL_STRING",
+    "summary": "Returns theH3cell ID in hexadecimal format (as a VARCHAR value) for a given latitude, longitude, and resolution.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_POINT_TO_CELL",
+    "summary": "Returns the INTEGER value of anH3cell ID for a Point (specified by aGEOGRAPHYobject) at a given resolution.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_POINT_TO_CELL_STRING",
+    "summary": "Returns the hexadecimal value of anH3cell ID for a Point (specified by aGEOGRAPHYobject) at a given resolution.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_POLYGON_TO_CELLS",
+    "summary": "Returns anarrayof INTEGER values of the IDs ofH3cells that have centroids contained by a Polygon (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_POLYGON_TO_CELLS_STRINGS",
+    "summary": "Returns anarrayof VARCHAR values of the hexadecimal IDs ofH3cells that have centroids contained by a Polygon (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_STRING_TO_INT",
+    "summary": "Converts anH3cell ID in hexadecimal format to an INTEGER value.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_TRY_COVERAGE",
+    "summary": "A special version ofH3_COVERAGEthat returns NULL if an error occurs when it attempts to return anarrayof IDs (as INTEGER values) identifying the minimal set ofH3cells that completely cover a shape (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_TRY_COVERAGE_STRINGS",
+    "summary": "A special version ofH3_COVERAGE_STRINGSthat returns NULL if an error occurs when it attempts to return anarrayof hexadecimal IDs (as VARCHAR values) identifying the minimal set ofH3cells that completely cover a shape (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_TRY_GRID_DISTANCE",
+    "summary": "A special version ofH3_GRID_DISTANCEthat returns NULL if an error occurs when it attempts to return the distance between twoH3cells.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_TRY_GRID_PATH",
+    "summary": "A special version ofH3_GRID_PATHthat returns NULL if an error occurs when it attempts to return an array of VARIANT values that contain the IDs of theH3cells that represent the line between two cells.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_TRY_POLYGON_TO_CELLS",
+    "summary": "A special version ofH3_POLYGON_TO_CELLSthat returns NULL if an error occurs when it attempts to return anarrayof INTEGER values of the IDs ofH3cells that have centroids contained by a Polygon (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_TRY_POLYGON_TO_CELLS_STRINGS",
+    "summary": "A special version ofH3_POLYGON_TO_CELLS_STRINGSthat returns NULL if an error occurs when it attempts to return anarrayof VARCHAR values of the hexadecimal IDs ofH3cells that have centroids contained by a Polygon (specified by aGEOGRAPHYobject).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_UNCOMPACT_CELLS",
+    "summary": "Returns anarrayofVARIANTvalues that contain the INTEGER IDs ofH3cells at the specified resolution that cover the same area as the H3 cells in the input.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "H3_UNCOMPACT_CELLS_STRINGS",
+    "summary": "Returns anarrayofVARIANTvalues that contain the VARCHAR hexadecimal IDs ofH3cells at the specified resolution that cover the same area as the H3 cells in the input.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "HASH",
+    "summary": "Returns a signed 64-bit hash value.",
+    "category": "Hash functions"
+  },
+  {
+    "name": "HASH_AGG",
+    "summary": "Returns an aggregate signed 64-bit hash value over the (unordered) set of input rows.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "HAVERSINE",
+    "summary": "Calculates the great-circle distance in kilometers between two points on the Earth\u2019s surface, using theHaversine formula.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "HEX_DECODE_BINARY",
+    "summary": "Decodes a hex-encoded string to a binary.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "HEX_DECODE_STRING",
+    "summary": "Decodes a hex-encoded string to a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "HEX_ENCODE",
+    "summary": "Encodes the input using hexadecimal (also \u2018hex\u2019 or \u2018base16\u2019) encoding.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "HLL",
+    "summary": "Uses HyperLogLog to return an approximation of the distinct cardinality of the input (i.e.HLL(col1,col2,...)returns an approximation ofCOUNT(DISTINCTcol1,col2,...)).",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "HLL_ACCUMULATE",
+    "summary": "Returns the HyperLogLog state at the end of aggregation.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "HLL_COMBINE",
+    "summary": "Combines (merges) input states into a single output state.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "HLL_ESTIMATE",
+    "summary": "Returns the cardinality estimate for the given HyperLogLog state.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "HLL_EXPORT",
+    "summary": "Converts input in BINARY format to OBJECT format.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "HLL_IMPORT",
+    "summary": "Converts input in OBJECT format to BINARY format.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "HOUR / MINUTE / SECOND",
+    "summary": "Extracts the corresponding time part from a time or timestamp value.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "ICEBERG_TABLE_FILES",
+    "summary": "Returns information about the data files registered to an externally managed",
+    "category": "iceberg-tm"
+  },
+  {
+    "name": "ICEBERG_TABLE_SNAPSHOT_REFRESH_HISTORY",
+    "summary": "Returns metadata andsnapshotinformation about the most recent refresh history for a specified externally managed",
+    "category": "iceberg-tm"
+  },
+  {
+    "name": "IFF",
+    "summary": "Returns one of two values depending on whether a Boolean expression evaluates to true or false.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "IFNULL",
+    "summary": "Ifexpr1is NULL, returnsexpr2, otherwise returnsexpr1.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "[ NOT ] ILIKE",
+    "summary": "Performs a case-insensitive comparison to determine whether a string matches or does not match a specified pattern.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "ILIKE ANY",
+    "summary": "Performs a case-insensitive comparison to match a string against any of one or more specified patterns.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "[ NOT ] IN",
+    "summary": "Tests whether its argument is or is not one of the members of an explicit list or the result of a subquery.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "INFER_SCHEMA",
+    "summary": "Automatically detects the file metadata schema in a set of staged data files that contain semi-structured data and retrieves the column definitions.",
+    "category": "Table functions"
+  },
+  {
+    "name": "INITCAP",
+    "summary": "Returns the input string with the first letter of each word in uppercase and the subsequent letters in lowercase.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "INSERT",
+    "summary": "Replaces a substring of the specified length, starting at the specified position, with a new string or binary value.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "INTEGRATION",
+    "summary": "Returns a JSON object that specifies the notification integration to use to send a message.",
+    "category": "Notification functions"
+  },
+  {
+    "name": "INVOKER_ROLE",
+    "summary": "Returns the name of the account-level role of the object executing the query or NULL if the name of the role is a database role.",
+    "category": "Context functions"
+  },
+  {
+    "name": "INVOKER_SHARE",
+    "summary": "Returns the name of the share that directly accessed the table or view where the INVOKER_SHARE function is invoked, otherwise the function returns NULL.",
+    "category": "Context functions"
+  },
+  {
+    "name": "IS [ NOT ] DISTINCT FROM",
+    "summary": "Compares whether two expressions are equal (or not equal).",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "IS [ NOT ] NULL",
+    "summary": "Determines whether an expression is NULL or is not NULL.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "IS_<OBJECT_TYPE>",
+    "summary": "This family of functions serves as Boolean predicates that can be used to determine the data type of a value stored in a VARIANT column.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_APPLICATION_ROLE_IN_SESSION",
+    "summary": "Verifies whether the application role is activated in the consumer\u2019s current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "IS_ARRAY",
+    "summary": "Returns TRUE if itsVARIANTargument contains anARRAYvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_BINARY",
+    "summary": "Returns TRUE if itsVARIANTargument contains abinary stringvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_BOOLEAN",
+    "summary": "Returns TRUE if itsVARIANTargument contains aBOOLEANvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_CHAR , IS_VARCHAR",
+    "summary": "Returns TRUE if itsVARIANTargument contains astring value.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_DATABASE_ROLE_IN_SESSION",
+    "summary": "Verifies whether the database role is in the user\u2019s active primary or secondary role hierarchy for the current session or if the specified column contains a database role that is in the user\u2019s active primary or secondary role hierarchy for the current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "IS_DATE , IS_DATE_VALUE",
+    "summary": "Returns TRUE if itsVARIANTargument contains aDATEvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_DECIMAL",
+    "summary": "Returns TRUE if itsVARIANTargument contains afixed-point number or integervalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_DOUBLE , IS_REAL",
+    "summary": "Returns TRUE if itsVARIANTargument contains afloating-point number, fixed-point number, or integervalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_GRANTED_TO_INVOKER_ROLE",
+    "summary": "Returns TRUE if the role returned by the INVOKER_ROLE function inherits the privileges of the specified role in the argument based on the context in which the function is called.",
+    "category": "Context functions"
+  },
+  {
+    "name": "IS_INSTANCE_ROLE_IN_SESSION",
+    "summary": "Verifies whether the user\u2019s active primary or secondary role hierarchy for the session inherits the specified instance role.",
+    "category": "Context functions"
+  },
+  {
+    "name": "IS_INTEGER",
+    "summary": "Returns TRUE if itsVARIANTargument contains anintegervalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_NULL_VALUE",
+    "summary": "Returns TRUE if itsVARIANTargument is aJSON nullvalue.",
+    "category": "Conditional expression functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_OBJECT",
+    "summary": "Returns TRUE if itsVARIANTargument contains anOBJECTvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_ORGANIZATION_USER",
+    "summary": "Returns TRUE if the argument is a Snowflake user who is anorganization user.",
+    "category": ""
+  },
+  {
+    "name": "IS_ORGANIZATION_USER_GROUP",
+    "summary": "Returns TRUE if the specifiedrolewas created when an administrator added anorganization user groupto the account.",
+    "category": ""
+  },
+  {
+    "name": "IS_ORGANIZATION_USER_GROUP_IN_SESSION",
+    "summary": "Assuming a role was imported from anorganization user group, verifies whether the role is in the user\u2019s active primary or secondary role hierarchy for the session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "IS_ROLE_IN_SESSION",
+    "summary": "Verifies whether the specified account role is in the currently active primary or secondary role hierarchy.",
+    "category": "Context functions"
+  },
+  {
+    "name": "IS_TIME",
+    "summary": "Verifies whether aVARIANTargument contains aTIMEvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "IS_TIMESTAMP_*",
+    "summary": "Verifies whether aVARIANTargument contains the respectivetimestampvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "JAROWINKLER_SIMILARITY",
+    "summary": "Computes theJaro-Winkler similaritybetween two input strings.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "JSON_EXTRACT_PATH_TEXT",
+    "summary": "Parses the first argument as a JSON string and returns the value of the element pointed to by the path in the second argument.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "KURTOSIS",
+    "summary": "Returns the sample excess kurtosis of non-NULL records.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "LAG",
+    "summary": "Accesses data in a previous row in the same result set without having to join the table to itself.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "LAST_DAY",
+    "summary": "Returns the last day of the specified date part for a date or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "LAST_QUERY_ID",
+    "summary": "Returns the ID of a specified query in the current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "LAST_SUCCESSFUL_SCHEDULED_TIME",
+    "summary": "Returns the timestamp representing the scheduled time for the most recent successful evaluation of the alert condition, where no errors occurred when executing the action.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "LAST_TRANSACTION",
+    "summary": "Returns the transaction ID of the last transaction that was either committed or rolled back in the current session.",
+    "category": "Context functions"
+  },
+  {
+    "name": "LAST_VALUE",
+    "summary": "Returns the last value within an ordered group of values.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "LEAD",
+    "summary": "Accesses data in a subsequent row in the same result set without having to join the table to itself.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "LEAST",
+    "summary": "Returns the smallest value from a list of expressions.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "LEAST_IGNORE_NULLS",
+    "summary": "Returns the smallest non-NULL value from a list of expressions.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "LEFT",
+    "summary": "Returns a leftmost substring of its input.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "LENGTH, LEN",
+    "summary": "Returns the length of an inputstring or binaryvalue.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "[ NOT ] LIKE",
+    "summary": "Performs a case-sensitive comparison to determine whether a string matches or does not match a specified pattern.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "LIKE ALL",
+    "summary": "Performs a case-sensitive comparison to match a string against all of one or more specified patterns.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "LIKE ANY",
+    "summary": "Performs a case-sensitive comparison to match a string against any of one or more specified patterns.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "LISTAGG",
+    "summary": "Returns the concatenated input values, separated by thedelimiterstring.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "LISTING_REFRESH_HISTORY",
+    "summary": "Returns the past 14 days of refresh history for a cross-cloud auto-fulfillment listing.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "LN",
+    "summary": "Returns the natural logarithm of a numeric expression.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "LOCALTIME",
+    "summary": "Returns the current time for the system.",
+    "category": "Context functions"
+  },
+  {
+    "name": "LOCALTIMESTAMP",
+    "summary": "Returns the current timestamp for the system in the local time zone.",
+    "category": "Context functions"
+  },
+  {
+    "name": "LOG",
+    "summary": "Returns the logarithm of a numeric expression.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "LOGIN_HISTORY , LOGIN_HISTORY_BY_USER",
+    "summary": "The LOGIN_HISTORY family of table functions can be used to query login attempts by Snowflake users along various dimensions.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "LOWER",
+    "summary": "Returns the input string with all characters converted to lowercase.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "LPAD",
+    "summary": "Left-pads a string with characters from another string, or left-pads a binary value with bytes from another binary value.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "LTRIM",
+    "summary": "Removes leading characters, including whitespace, from a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "MAP_CAT",
+    "summary": "Returns the concatenatation of twoMAPs.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "MAP_CONTAINS_KEY",
+    "summary": "Determines whether the specifiedMAPcontains the specified key.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "MAP_DELETE",
+    "summary": "Returns aMAPbased on an existing MAP with one or more keys removed..",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "MAP_INSERT",
+    "summary": "Returns a newMAPconsisting of the input MAP with a new key-value pair inserted (an existing key updated with a new value).",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "MAP_KEYS",
+    "summary": "Returns the keys in aMAP.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "MAP_PICK",
+    "summary": "Returns a newMAPcontaining the specified key-value pairs from an existing MAP.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "MAP_SIZE",
+    "summary": "Returns the size of aMAP.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "MATERIALIZED_VIEW_REFRESH_HISTORY",
+    "summary": "This table function is used for querying thematerialized viewsrefresh history for a specified materialized view within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "MAX",
+    "summary": "Returns the maximum value for the records withinexpr.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "MAX_BY",
+    "summary": "Finds the row(s) containing the maximum value for a column and returns the value of another column in that row.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "MD5 , MD5_HEX",
+    "summary": "Returns a 32-character hex-encoded string containing the 128-bit MD5 message digest.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "MD5_BINARY",
+    "summary": "Returns a 16-byteBINARYvalue containing the 128-bit MD5 message digest.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "MD5_NUMBER \u2014 OBSOLETED",
+    "summary": "Returns the 128-bit MD5 message digest interpreted as a signed 128-bit big endian number.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "MD5_NUMBER_LOWER64",
+    "summary": "Calculates the 128-bit MD5 message digest, interprets it as a signed 128-bit big endian number, and returns the lower 64 bits of the number as an unsigned integer.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "MD5_NUMBER_UPPER64",
+    "summary": "Calculates the 128-bit MD5 message digest, interprets it as a signed 128-bit big endian number, and returns the upper 64 bits of the number as an unsigned integer.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "MEDIAN",
+    "summary": "Determines the median of a set of values.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "MIN",
+    "summary": "Returns the minimum value for the records withinexpr.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "MIN_BY",
+    "summary": "Finds the row(s) containing the minimum value for a column and returns the value of another column in that row.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "MINHASH",
+    "summary": "Returns a MinHash state containing an array of sizekconstructed by applyingknumber of different hash functions to the input rows and keeping the minimum of each hash function.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "MINHASH_COMBINE",
+    "summary": "Combines input MinHash states into a single MinHash output state.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "MOD",
+    "summary": "Returns the remainder of inputexpr1divided by inputexpr2.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "MODE",
+    "summary": "Returns the most frequent value for the values withinexpr1.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "MODEL_MONITOR_DRIFT_METRIC",
+    "summary": "Gets drift metrics from amodel monitor.",
+    "category": "Model monitor functions"
+  },
+  {
+    "name": "MODEL_MONITOR_PERFORMANCE_METRIC",
+    "summary": "Gets performance metrics from amodel monitor.",
+    "category": "Model monitor functions"
+  },
+  {
+    "name": "MODEL_MONITOR_STAT_METRIC",
+    "summary": "Gets count metrics from amodel monitor.",
+    "category": "Model monitor functions"
+  },
+  {
+    "name": "MONTHNAME",
+    "summary": "Returns the three-letter month name for the specified date or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "MONTHS_BETWEEN",
+    "summary": "Returns the number of months between two DATE or TIMESTAMP values.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "NETWORK_RULE_REFERENCES",
+    "summary": "Returns a row for each object with which the specified network rule is associatedorreturns a row for each network rule associated with the specified container.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "NEXT_DAY",
+    "summary": "Returns the date of the first specified day of week (DOW) that occurs after the input date.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "NORMAL",
+    "summary": "Generates a normally-distributed pseudo-random floating point number with specifiedmeanandstddev(standard deviation).",
+    "category": "Data generation functions"
+  },
+  {
+    "name": "NOTIFICATION_HISTORY",
+    "summary": "This table function can be used to query the history of notifications sent through Snowflake.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "NTH_VALUE",
+    "summary": "Returns the nth value (up to 1000) within an ordered group of values.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "NTILE",
+    "summary": "Divides an ordered data set equally into the number of buckets specified byconstant_value.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "NULLIF",
+    "summary": "Returns NULL ifexpr1is equal toexpr2, otherwise returnsexpr1.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "NULLIFZERO",
+    "summary": "Returns NULL if the argument evaluates to0; otherwise, returns the argument.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "NVL",
+    "summary": "Ifexpr1is NULL, returnsexpr2, otherwise returnsexpr1.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "NVL2",
+    "summary": "Returns values depending on whether the first input is NULL.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "OBJECT_AGG",
+    "summary": "Returns one OBJECT per group.",
+    "category": "Aggregate functions,Window functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "OBJECT_CONSTRUCT",
+    "summary": "Returns anOBJECTconstructed from the arguments.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "OBJECT_CONSTRUCT_KEEP_NULL",
+    "summary": "Returns anOBJECTconstructed from the arguments that retains key-values pairs with NULL values.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "OBJECT_DELETE",
+    "summary": "Returns an object containing the contents of the input (that is, source) object with one or more keys removed.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "OBJECT_INSERT",
+    "summary": "Returns anOBJECTvalue consisting of the input OBJECT value with a new key-value pair inserted (or an existing key updated with a new value).",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "OBJECT_KEYS",
+    "summary": "Returns an array containing the list of keys in the top-most level of the input object.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "OBJECT_PICK",
+    "summary": "Returns a newOBJECTcontaining some of the key-value pairs from an existing object.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "OCTET_LENGTH",
+    "summary": "Returns the length of a string or binary value in bytes.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "PARSE_DOCUMENT (SNOWFLAKE.CORTEX)",
+    "summary": "Returns the extracted content from a document on a Snowflake stage as an OBJECT that contains JSON-encoded objects as strings.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "PARSE_IP",
+    "summary": "Returns a JSON object consisting of all the components from a valid INET (Internet Protocol) or CIDR (Classless Internet Domain Routing) IPv4 or IPv6 string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "PARSE_JSON",
+    "summary": "Interprets an input string as a JSON document, producing aVARIANTvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "PARSE_URL",
+    "summary": "Returns anOBJECTvalue that consists of all the components (fragment, host, parameters, path, port, query, scheme) in a valid input URL/URI.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "PARSE_XML",
+    "summary": "Interprets an input string as anXMLdocument, producing anOBJECTvalue.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "PERCENT_RANK",
+    "summary": "Returns the relative rank of a value within a group of values, specified as a percentage ranging from 0.0 to 1.0.",
+    "category": "Window functions"
+  },
+  {
+    "name": "PERCENTILE_CONT",
+    "summary": "Return a percentile value based on a continuous distribution of the input column (specified inorder_by_expr).",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "PERCENTILE_DISC",
+    "summary": "Returns a percentile value based on a discrete distribution of the input column (specified inorder_by_expr).",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "PI",
+    "summary": "Returns the value of pi as a floating-point value.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "PIPE_USAGE_HISTORY",
+    "summary": "This table function can be used to query the history of data loaded into Snowflake tables usingSnowpipewithin a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "POLICY_CONTEXT",
+    "summary": "Simulates the results of a query based upon the value of one or more context functions, which lets you determine how policies affect query results.",
+    "category": "Context functions"
+  },
+  {
+    "name": "POLICY_REFERENCES",
+    "summary": "Returns a row for each object that has the specified policy assigned to the objectorreturns a row for each policy assigned to the specified object.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "POSITION",
+    "summary": "Searches for the first occurrence of the first argument in the second argument and, if successful, returns the position (1-based) of the first argument in the second argument.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "POW, POWER",
+    "summary": "Returns a number (x) raised to the specified power (y).",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "PREVIOUS_DAY",
+    "summary": "Returns the date of the first specified day of week (DOW) that occurs before the input date.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "PROMPT FUNCTION",
+    "summary": "The PROMPT function constructs a structured OBJECT containing a template string and a list of arguments.",
+    "category": ""
+  },
+  {
+    "name": "QUERY_ACCELERATION_HISTORY",
+    "summary": "The QUERY_ACCELERATION_HISTORY function is used for querying thequery acceleration servicehistory within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "QUERY_HISTORY , QUERY_HISTORY_BY_*",
+    "summary": "You can use the QUERY_HISTORY family of table functions to query Snowflake query history along various dimensions.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "RADIANS",
+    "summary": "Converts degrees to radians.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "RANDOM",
+    "summary": "Each call returns a pseudo-random 64-bit integer.",
+    "category": "Data generation functions"
+  },
+  {
+    "name": "RANDSTR",
+    "summary": "Returns a random string of specifiedlength.",
+    "category": "Data generation functions"
+  },
+  {
+    "name": "RANK",
+    "summary": "Returns the rank of a value within an ordered group of values.",
+    "category": "Window functions"
+  },
+  {
+    "name": "RATIO_TO_REPORT",
+    "summary": "Returns the ratio of a value within a group to the sum of the values within the group.",
+    "category": "Window functions"
+  },
+  {
+    "name": "REDUCE",
+    "summary": "Reduces anarrayto a single value based on the logic in a lambda expression.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "[ NOT ] REGEXP",
+    "summary": "Performs a comparison to determine whether a string matches or does not match a specified pattern.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "REGEXP_COUNT",
+    "summary": "Returns the number of times that a pattern occurs in a string.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "REGEXP_INSTR",
+    "summary": "Returns the position of the specified occurrence of the regular expression pattern in the string subject.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "REGEXP_LIKE",
+    "summary": "Performs a comparison to determine whether a string matches a specified pattern.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "REGEXP_REPLACE",
+    "summary": "Returns the subject with the specified pattern (or all occurrences of the pattern) either removed or replaced by a replacement string.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "REGEXP_SUBSTR",
+    "summary": "Returns the substring that matches a regular expression within a string.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "REGEXP_SUBSTR_ALL",
+    "summary": "Returns anARRAYthat contains all substrings that match a regular expression within a string.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "REGR_AVGX",
+    "summary": "Returns the average of the independent variable for non-null pairs in a group, wherexis the independent variable andyis the dependent variable.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "REGR_AVGY",
+    "summary": "Returns the average of the dependent variable for non-null pairs in a group, wherexis the independent variable andyis the dependent variable.",
+    "category": "Aggregate functions,Window functions"
+  },
+  {
+    "name": "REGR_COUNT",
+    "summary": "Returns the number of non-null number pairs in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "REGR_INTERCEPT",
+    "summary": "Returns the intercept of the univariate linear regression line for non-null pairs in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "REGR_R2",
+    "summary": "Returns the coefficient of determination for non-null pairs in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "REGR_SLOPE",
+    "summary": "Returns the slope of the linear regression line for non-null pairs in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "REGR_SXX",
+    "summary": "Returns REGR_COUNT(y, x) * VAR_POP(x) for non-null pairs.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "REGR_SXY",
+    "summary": "Returns REGR_COUNT(expr1, expr2) * COVAR_POP(expr1, expr2) for non-null pairs.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "REGR_SYY",
+    "summary": "Returns REGR_COUNT(y, x) * VAR_POP(y) for non-null pairs.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "REGR_VALX",
+    "summary": "Returns NULL if the first argument is NULL; otherwise, returns the second argument.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "REGR_VALY",
+    "summary": "Returns NULL if the second argument is NULL; otherwise, returns the first argument.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "REPEAT",
+    "summary": "Builds a string by repeating the input for the specified number of times.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "REPLACE",
+    "summary": "Removes all occurrences of a specified substring, and optionally replaces them with another substring.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "REPLICATION_GROUP_REFRESH_HISTORY, REPLICATION_GROUP_REFRESH_HISTORY_ALL",
+    "summary": "You can use the REPLICATION_GROUP_REFRESH_HISTORY family of table functions to query the replication history for one secondary replication or failover group, or all such groups, within the last 14 days.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "REPLICATION_GROUP_REFRESH_PROGRESS, REPLICATION_GROUP_REFRESH_PROGRESS_BY_JOB, REPLICATION_GROUP_REFRESH_PROGRESS_ALL",
+    "summary": "You can use the REPLICATION_GROUP_REFRESH_PROGRESS family of table functions to query the status of refresh operations for replication or failover groups.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "REPLICATION_GROUP_USAGE_HISTORY",
+    "summary": "Returns the replication usage history for secondary replication or failover groups within the last 14 days.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "REPLICATION_USAGE_HISTORY",
+    "summary": "This table function can be used to query the replication history for a specified database within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "REST_EVENT_HISTORY",
+    "summary": "Returns a list of SCIM REST API requests made to Snowflake over a specified time interval.",
+    "category": "Table functions"
+  },
+  {
+    "name": "RESULT_SCAN",
+    "summary": "Returns the result set of a previous command (within 24 hours of when you ran the query) as if the result was a table.",
+    "category": "Table functions"
+  },
+  {
+    "name": "REVERSE",
+    "summary": "Reverses the order of characters in a string, or of bytes in a binary value.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "RIGHT",
+    "summary": "Returns a rightmost substring of its input.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "[ NOT ] RLIKE",
+    "summary": "Performs a comparison to determine whether a string matches or does not match a specified pattern.",
+    "category": "String functions (regular expressions)"
+  },
+  {
+    "name": "ROUND",
+    "summary": "Returns rounded values forinput_expr.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ROW_NUMBER",
+    "summary": "Returns a unique row number for each row within a window partition.",
+    "category": "Window function syntax and usage"
+  },
+  {
+    "name": "RPAD",
+    "summary": "Right-pads a string with characters from another string, or right-pads a binary value with bytes from another binary value.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "RTRIM",
+    "summary": "Removes trailing characters, including whitespace, from a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "RTRIMMED_LENGTH",
+    "summary": "Returns the length of its argument, minus trailing whitespace, but including leading whitespace.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SANITIZE_WEBHOOK_CONTENT",
+    "summary": "Removes placeholders (for example, the SNOWFLAKE_WEBHOOK_SECRET placeholder, which specifies a secret) from the body of a notification message to be sent.",
+    "category": "Notification functions"
+  },
+  {
+    "name": "SCHEDULED_TIME",
+    "summary": "Returns the timestamp representing the scheduled time of the current alert.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "SEARCH",
+    "summary": "Searches character data (text) in specified columns from one or more tables, including fields in VARIANT, OBJECT, and ARRAY columns.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SEARCH_IP",
+    "summary": "Searches for valid IPv4 addresses in specified character-string columns from one or more tables, including fields in VARIANT, OBJECT, and ARRAY columns.",
+    "category": ""
+  },
+  {
+    "name": "SEARCH_OPTIMIZATION_HISTORY",
+    "summary": "This table function is used for querying thesearch optimization servicemaintenance history for a specified table within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "SEARCH_PREVIEW (SNOWFLAKE.CORTEX)",
+    "summary": "Given a Cortex Search service name, and a query, returns a response from the specified service.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SENTIMENT (SNOWFLAKE.CORTEX)",
+    "summary": "Returns an overall sentiment score for the given English-language input text.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SEQ1 / SEQ2 / SEQ4 / SEQ8",
+    "summary": "Returns a sequence of monotonically increasing integers, with wrap-around.",
+    "category": "Data generation functions"
+  },
+  {
+    "name": "SERVERLESS_ALERT_HISTORY",
+    "summary": "This table function is used for querying theserverless alertusage history.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "SERVERLESS_TASK_HISTORY",
+    "summary": "This table function is used for querying theserverless taskusage history.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "SHA1 , SHA1_HEX",
+    "summary": "Returns a 40-character hex-encoded string containing the 160-bit SHA-1 message digest.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SHA1_BINARY",
+    "summary": "Returns a 20-byte binary containing the 160-bit SHA-1 message digest.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SHA2 , SHA2_HEX",
+    "summary": "Returns a hex-encoded string containing the N-bit SHA-2 message digest, where N is the specified output digest size.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SHA2_BINARY",
+    "summary": "Returns a binary containing the N-bit SHA-2 message digest, where N is the specified output digest size.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SHOW_PYTHON_PACKAGES_DEPENDENCIES",
+    "summary": "Returns a list of the dependencies and their versions for the Python packages that were specified.",
+    "category": "System functions"
+  },
+  {
+    "name": "SIGN",
+    "summary": "Returns the sign of its argument.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "SIN",
+    "summary": "Computes the sine of its argument; the argument should be expressed in radians.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "SINH",
+    "summary": "Computes the hyperbolic sine of its argument.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "SKEW",
+    "summary": "Returns the sample skewness of non-NULL records.",
+    "category": "Aggregate functions"
+  },
+  {
+    "name": "SOUNDEX",
+    "summary": "Returns a string that contains a phonetic representation of the input string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SOUNDEX_P123",
+    "summary": "Returns a string that contains a phonetic representation of the input string, and retains the Soundex code number for the second letter when the first and second letters use the same number.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SPACE",
+    "summary": "Builds a string consisting of the specified number of blank spaces.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "<SERVICE_NAME>!SPCS_CANCEL_JOB",
+    "summary": "Cancels aSnowpark Container Services job; also referred to as job service.",
+    "category": "Table functions"
+  },
+  {
+    "name": "<SERVICE_NAME>!SPCS_GET_EVENTS",
+    "summary": "Returns the events that Snowflake collected for the specified service.",
+    "category": "Table functions"
+  },
+  {
+    "name": "<SERVICE_NAME>!SPCS_GET_LOGS",
+    "summary": "Returns the logs that Snowflake collected from containers of the specified service.",
+    "category": ""
+  },
+  {
+    "name": "<SERVICE_NAME>!SPCS_GET_METRICS",
+    "summary": "Returns the metrics that Snowflake collected for the specified service.",
+    "category": ""
+  },
+  {
+    "name": "<SERVICE_NAME>!SPCS_WAIT_FOR",
+    "summary": "Waits for theSnowpark Container Services serviceto reach the specified state, with a timeout.",
+    "category": "Snowpark Container Services functions"
+  },
+  {
+    "name": "SPLIT",
+    "summary": "Splits a given string with a given separator and returns the result in an array of strings.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SPLIT_PART",
+    "summary": "Splits a given string at a specified character and returns the requested part.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SPLIT_TEXT_MARKDOWN_HEADER (SNOWFLAKE.CORTEX)",
+    "summary": "The SPLIT_TEXT_MARKDOWN_HEADER function splits a Markdown-formatted document into structured text chunks based on header levels.",
+    "category": ""
+  },
+  {
+    "name": "SPLIT_TEXT_RECURSIVE_CHARACTER (SNOWFLAKE.CORTEX)",
+    "summary": "The SPLIT_TEXT_RECURSIVE_CHARACTER function splits a string into shorter stings, recursively, for preprocessing text to be used with text embedding or search indexing functions.",
+    "category": ""
+  },
+  {
+    "name": "SPLIT_TO_TABLE",
+    "summary": "This table function splits a string (based on a specified delimiter) and flattens the results into rows.",
+    "category": "String & binary functions,Table functions"
+  },
+  {
+    "name": "SQRT",
+    "summary": "Returns the square-root of a non-negative numeric expression.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "SQUARE",
+    "summary": "Returns the square of a numeric expression (i.e. a numeric expression multiplied by itself).",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "ST_AREA",
+    "summary": "Returns the area of the Polygon(s) in aGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ASEWKB",
+    "summary": "Given a value of typeGEOGRAPHYorGEOMETRY, return the binary representation of that value inEWKB (extended well-known binary)format.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ASEWKT",
+    "summary": "Given a value of typeGEOGRAPHYorGEOMETRY, return the text (VARCHAR) representation of that value inEWKT (extended well-known text)format.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ASGEOJSON",
+    "summary": "Given a value of typeGEOGRAPHYorGEOMETRY, return theGeoJSONrepresentation of that value.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ASWKB , ST_ASBINARY",
+    "summary": "Given a value of typeGEOGRAPHYorGEOMETRY, return the binary representation of that value inWKB (well-known binary)format.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ASWKT , ST_ASTEXT",
+    "summary": "Given a value of typeGEOGRAPHYorGEOMETRY, return the text (VARCHAR) representation of that value inWKT (well-known text)format.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_AZIMUTH",
+    "summary": "Given a Point that represents the origin (the location of the observer) and a specified Point, returns the azimuth in radians.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_BUFFER",
+    "summary": "Returns aGEOMETRYobject that represents a MultiPolygon containing the points within a specified distance of the input GEOMETRY object.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_CENTROID",
+    "summary": "Returns the Point representing the geometric center of aGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_COLLECT",
+    "summary": "There are two forms of ST_COLLECT.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_CONTAINS",
+    "summary": "Returns TRUE if aGEOGRAPHYorGEOMETRYobject is completely inside another object of the same type.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_COVEREDBY",
+    "summary": "Returns TRUE if no point in one geospatial object is outside another geospatial object.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_COVERS",
+    "summary": "Returns TRUE if no point in one geospatial object is outside of another geospatial object.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_DIFFERENCE",
+    "summary": "Given two input GEOGRAPHY objects, returns a GEOGRAPHY object that represents the points in the first object that are not in the second object (i.e. the difference between the two objects).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_DIMENSION",
+    "summary": "Given a value of typeGEOGRAPHYorGEOMETRY, return the \u201cdimension\u201d of the value.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_DISJOINT",
+    "summary": "Returns TRUE if the twoGEOGRAPHYobjects or the twoGEOMETRYobjects are disjoint (i.e. do not share any portion of space).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_DISTANCE",
+    "summary": "Returns the minimum great circle distance between twoGEOGRAPHYor the minimum Euclidean distance between twoGEOMETRYobjects.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_DWITHIN",
+    "summary": "Returns TRUE if the minimum great circle distance between two points (twoGEOGRAPHYobjects) is within the specified distance.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ENDPOINT",
+    "summary": "Returns the last Point in a LineString.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ENVELOPE",
+    "summary": "Returns the minimum bounding box (a rectangular \u201cenvelope\u201d) that encloses a specifiedGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_GEOGFROMGEOHASH",
+    "summary": "Returns aGEOGRAPHYobject for the polygon that represents the boundaries of ageohash.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "ST_GEOGPOINTFROMGEOHASH",
+    "summary": "Returns aGEOGRAPHYobject for the Point that represents the center of ageohash.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "ST_GEOGRAPHYFROMWKB",
+    "summary": "Parses aWKB (well-known binary)orEWKB (extended well-known binary)input and returns a value of typeGEOGRAPHY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "ST_GEOGRAPHYFROMWKT",
+    "summary": "Parses aWKT (well-known text)orEWKT (extended well-known text)input and returns a value of typeGEOGRAPHY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "ST_GEOHASH",
+    "summary": "Returns thegeohashfor aGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_GEOMETRYFROMWKB",
+    "summary": "Parses aWKB (well-known binary)or EWKB (extended well-known binary) input and returns a value of typeGEOMETRY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "ST_GEOMETRYFROMWKT",
+    "summary": "Parses aWKT (well-known text)or EWKT (extended well-known text) input and returns a value of typeGEOMETRY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "ST_GEOMFROMGEOHASH",
+    "summary": "Returns aGEOMETRYobject for the polygon that represents the boundaries of ageohash.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_GEOMPOINTFROMGEOHASH",
+    "summary": "Returns aGEOMETRYobject for the point that represents center of ageohash.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_HAUSDORFFDISTANCE",
+    "summary": "Returns the discreteHausdorff distancebetween twoGEOGRAPHYobjects.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_INTERPOLATE",
+    "summary": "Given an inputGEOGRAPHYobject, returns an interpolated object that is within a specified tolerance.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_INTERSECTION",
+    "summary": "Given two input GEOGRAPHY objects, returns a GEOGRAPHY object that represents the shape containing the set of points that are common to both input objects (i.e. the intersection of the two objects).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_INTERSECTION_AGG",
+    "summary": "Given a GEOGRAPHY column, returns a GEOGRAPHY object that represents the shape containing the combined set of points that are common to the shapes represented by the objects in the column (that is, the intersection of the shapes).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_INTERSECTS",
+    "summary": "Returns TRUE if the twoGEOGRAPHYobjects or the twoGEOMETRYobjects intersect (i.e. share any portion of space).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_ISVALID",
+    "summary": "Returns TRUE if the specified GEOGRAPHY or GEOMETRY object represents avalid shape.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_LENGTH",
+    "summary": "Returns the great circle length of the LineString(s) in aGEOGRAPHYobject or the Euclidean length of the LineString(s) in aGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_MAKEGEOMPOINT , ST_GEOMPOINT",
+    "summary": "Constructs aGEOMETRYobject that represents a Point with the specified longitude and latitude.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_MAKELINE",
+    "summary": "Constructs aGEOGRAPHYorGEOMETRYobject that represents a line connecting the points in the input objects.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_MAKEPOINT , ST_POINT",
+    "summary": "Constructs aGEOGRAPHYobject that represents a point with the specified longitude and latitude.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_MAKEPOLYGON , ST_POLYGON",
+    "summary": "Constructs aGEOGRAPHYorGEOMETRYobject that represents a Polygon without holes.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_MAKEPOLYGONORIENTED",
+    "summary": "Constructs aGEOGRAPHYobject that represents a Polygon without holes.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_NPOINTS , ST_NUMPOINTS",
+    "summary": "Returns the number of points in aGEOGRAPHYorGEOGRAPHYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_PERIMETER",
+    "summary": "Returns the length of the perimeter of the polygon(s) in aGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_POINTN",
+    "summary": "Returns a Point at a specified index in a LineString.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_SETSRID",
+    "summary": "Returns aGEOMETRYobject that has its SRID (spatial reference system identifier) set to the specified value.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_SIMPLIFY",
+    "summary": "Given an inputGEOGRAPHYorGEOMETRYobject that represents a Line or Polygon, returns a simpler approximation of the object.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_SRID",
+    "summary": "Returns the SRID (spatial reference system identifier) of aGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_STARTPOINT",
+    "summary": "Returns the first Point in a LineString.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_SYMDIFFERENCE",
+    "summary": "Given two input GEOGRAPHY objects, returns a GEOGRAPHY object that represents the set of points from both input objects that are not part of the intersection of the objects (i.e. thesymmetric differenceof the two objects).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_TRANSFORM",
+    "summary": "Converts aGEOMETRYobject from onespatial reference system (SRS)to another.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_UNION",
+    "summary": "Given two input GEOGRAPHY objects, returns a GEOGRAPHY object that represents the combined set of shapes for both objects (i.e. the union of the two shapes).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_UNION_AGG",
+    "summary": "Given a GEOGRAPHY column, returns a GEOGRAPHY object that represents the combined set of points that are in at least one of the shapes represented by the objects in the column (that is, the union of the shapes).",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_WITHIN",
+    "summary": "Returns true if the first geospatial object is fully contained by the second geospatial object.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_X",
+    "summary": "Returns the longitude (X coordinate) of a Point represented by aGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_XMAX",
+    "summary": "Returns the maximum longitude (X coordinate) of all points contained in the specifiedGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_XMIN",
+    "summary": "Returns the minimum longitude (X coordinate) of all points contained in the specifiedGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_Y",
+    "summary": "Returns the latitude (Y coordinate) of a Point represented by aGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_YMAX",
+    "summary": "Returns the maximum latitude (Y coordinate) of all points contained in the specifiedGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "ST_YMIN",
+    "summary": "Returns the minimum latitude (Y coordinate) of all points contained in the specifiedGEOGRAPHYorGEOMETRYobject.",
+    "category": "Geospatial functions"
+  },
+  {
+    "name": "STAGE_DIRECTORY_FILE_REGISTRATION_HISTORY",
+    "summary": "This table function can be used to query information about the metadata history for a directory table.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "STAGE_STORAGE_USAGE_HISTORY",
+    "summary": "This table function can be used to query the average daily data storage usage, in bytes, forallthe Snowflake stages in your account within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "STARTSWITH",
+    "summary": "Returns true ifexpr1starts withexpr2.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "STDDEV, STDDEV_SAMP",
+    "summary": "Returns the sample standard deviation (square root of sample variance) of non-NULL values.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "STDDEV_POP",
+    "summary": "Returns the population standard deviation (square root of variance) of non-NULL values.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "STRIP_NULL_VALUE",
+    "summary": "Converts aJSON nullvalue to a SQL NULL value.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "STRTOK",
+    "summary": "Tokenizes a given string and returns the requested part.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "STRTOK_SPLIT_TO_TABLE",
+    "summary": "Tokenizes a string with the given set of delimiters and flattens the results into rows.",
+    "category": "String & binary functions,Table functions"
+  },
+  {
+    "name": "STRTOK_TO_ARRAY",
+    "summary": "Tokenizes the given string using the given set of delimiters and returns the tokens as anARRAYvalue.",
+    "category": "String & binary functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "SUBSTR , SUBSTRING",
+    "summary": "Returns the portion of thestring or binaryvalue frombase_expr, starting from the character/byte specified bystart_expr, with optionally limited length.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SUM",
+    "summary": "Returns the sum of non-NULL records forexpr.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "SUMMARIZE (SNOWFLAKE.CORTEX)",
+    "summary": "Summarizes the given English-language input text.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "SYSDATE",
+    "summary": "Returns the current timestamp for the system in the UTC time zone.",
+    "category": "Context functions"
+  },
+  {
+    "name": "SYSTEM$ABORT_SESSION",
+    "summary": "Aborts the specified session.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ABORT_TRANSACTION",
+    "summary": "Aborts the specified transaction, if it is running.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ADD_EVENT (FOR SNOWFLAKE SCRIPTING)",
+    "summary": "Add an event for trace.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ADD_REFERENCE",
+    "summary": "Called by a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$ALLOWLIST",
+    "summary": "Returns hostnames and port numbers to add to your firewall\u2019s allowed list so that you can access Snowflake from behind your firewall.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ALLOWLIST_PRIVATELINK",
+    "summary": "Returns hostnames and port numbers forAWS PrivateLink,Azure Private Link, andGoogle Cloud Private Service Connectdeployments to add to your firewall\u2019s allowed list so that you can access Snowflake from behind your firewall.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$APP_COMPATIBILITY_CHECK",
+    "summary": "Returns theSnowflake editionof the consumer account where an app is installed.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$APPLICATION_GET_LOG_LEVEL",
+    "summary": "Returns the log level for the specified object.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$APPLICATION_GET_METRIC_LEVEL",
+    "summary": "Returns the metric level for the specified object.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$APPLICATION_GET_TRACE_LEVEL",
+    "summary": "Returns the trace level for the specified object.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$AUTHORIZE_PRIVATELINK",
+    "summary": "Enables private connectivity to the Snowflake service for the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$AUTHORIZE_STAGE_PRIVATELINK_ACCESS",
+    "summary": "Authorizes Snowflake to access the Microsoft Azure Private Endpoint forAzure private endpoints for internal stagesfor the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$AUTO_REFRESH_STATUS",
+    "summary": "Returns the automated refresh status for an externally managedIceberg table.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$BEGIN_DEBUG_APPLICATION",
+    "summary": "Enablessession debug modefor a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$BEHAVIOR_CHANGE_BUNDLE_STATUS",
+    "summary": "Returns the status of the specifiedbehavior change release bundlefor the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$BLOCK_INTERNAL_STAGES_PUBLIC_ACCESS",
+    "summary": "Prevents all public traffic from accessing the internal stage of the current Snowflake account on Microsoft Azure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CANCEL_ALL_QUERIES",
+    "summary": "Cancels all active/running queries in the specified session.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CANCEL_QUERY",
+    "summary": "Cancels the specified query (or statement) if it is currently active/running.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CATALOG_LINK_STATUS",
+    "summary": "Returns the link status for a specifiedcatalog-linked database.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CLEANUP_DATABASE_ROLE_GRANTS",
+    "summary": "Revokes privileges on dropped objects from the share and grants the database role to the share.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CLIENT_VERSION_INFO",
+    "summary": "Returns version information for Snowflake clients and drivers.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CLUSTERING_DEPTH",
+    "summary": "Computes the average depth of the table according to the specified columns (or the clustering key defined for the table).",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CLUSTERING_INFORMATION",
+    "summary": "Returns clustering information, including average clustering depth, for a table based on one or more columns in the table.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CLUSTERING_RATIO \u2014 DEPRECATED",
+    "summary": "Calculates the clustering ratio for a table, based on one or more columns in the table.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$COMMIT_MOVE_ORGANIZATION_ACCOUNT",
+    "summary": "Finalizes the process of moving anorganization accountfrom one region to another.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CONVERT_PIPES_SQS_TO_SNS",
+    "summary": "Convert pipes using Amazon SQS (Simple Queue Service) notifications to the Amazon Simple Notification Service (SNS) service for an S3 bucket.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CREATE_BILLING_EVENT",
+    "summary": "Creates abillable eventthat tracks consumer usage of an installed monetized application.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CREATE_BILLING_EVENTS",
+    "summary": "Creates multiplebillable eventsthat track consumer usage of installed monetized applications.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$CURRENT_USER_TASK_NAME",
+    "summary": "Returns the name of the task currently executing when invoked from the statement or stored procedure defined by the task.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DATA_METRIC_SCAN",
+    "summary": "Returns the rows identified by adata quality metricas containing data that fails a data quality check.",
+    "category": "System functions,Table functions"
+  },
+  {
+    "name": "SYSTEM$DATABASE_REFRESH_HISTORY \u2014 DEPRECATED",
+    "summary": "Returns a JSON object showing the refresh history for a secondary database.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DATABASE_REFRESH_PROGRESS , SYSTEM$DATABASE_REFRESH_PROGRESS_BY_JOB \u2014 DEPRECATED",
+    "summary": "The SYSTEM$DATABASE_REFRESH_PROGRESS family of functions can be used to query the status of a database refresh along various dimensions.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DECODE_PAT",
+    "summary": "Returns information about aprogrammatic access token, given the secret for the token.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DEPROVISION_PRIVATELINK_ENDPOINT",
+    "summary": "Deprovisions a private connectivity endpoint in the Snowflake VPC or VNet to prevent Snowflake from connecting to an external service using private connectivity.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DISABLE_BEHAVIOR_CHANGE_BUNDLE",
+    "summary": "Disables the behavior changes included in the specifiedbehavior change release bundlefor the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DISABLE_DATABASE_REPLICATION",
+    "summary": "Disable replication for a primary database and any secondary databases linked to it.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DISABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT",
+    "summary": "Disables Cross-Cloud Auto-Fulfillment on an account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$DISABLE_PREVIEW_ACCESS",
+    "summary": "Disables access toopen previewand private preview features.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ENABLE_BEHAVIOR_CHANGE_BUNDLE",
+    "summary": "Enables behavior changes included in the specifiedbehavior change release bundlefor the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT",
+    "summary": "Enables Cross-Cloud Auto-Fulfillment on an account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ENABLE_PREVIEW_ACCESS",
+    "summary": "Enables access toopen previewfeatures.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$END_DEBUG_APPLICATION",
+    "summary": "Disablessession debug modefor a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$ESTIMATE_AUTOMATIC_CLUSTERING_COSTS",
+    "summary": "Returns estimated costs associated with enablingAutomatic Clusteringfor a table.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ESTIMATE_QUERY_ACCELERATION",
+    "summary": "For a previously executed query, this function returns a JSON object that specifies if the query is eligible to benefit from thequery acceleration service.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$ESTIMATE_SEARCH_OPTIMIZATION_COSTS",
+    "summary": "Returns the estimated costs of addingsearch optimizationto a given table and configuring specific columns for search optimization.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$EXPLAIN_JSON_TO_TEXT",
+    "summary": "This function converts EXPLAIN output from JSON to formatted text.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$EXPLAIN_PLAN_JSON",
+    "summary": "Given the text of a SQL statement, this function generates the EXPLAIN plan in JSON.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$EXTERNAL_TABLE_PIPE_STATUS",
+    "summary": "Retrieves a JSON representation of the current refresh status for the internal (hidden) pipe object associated with an external table.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$FINISH_OAUTH_FLOW",
+    "summary": "Sets the OAUTH_REFRESH_TOKEN parameter value of the secret passed as an argument in theSYSTEM$START_OAUTH_FLOWcall that began the OAuth flow.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GENERATE_SAML_CSR",
+    "summary": "Generates a certificate signing request (CSR) with the subject set to the subject of the certificate stored in theSAML2 integrationand can specify theDNto be used in the CSR.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GENERATE_SCIM_ACCESS_TOKEN",
+    "summary": "Returns a new SCIM access token that is valid for six months.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_ALL_REFERENCES",
+    "summary": "Iterates through all associations for a reference and returns information about the associations.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_AWS_SNS_IAM_POLICY",
+    "summary": "Returns an AWS IAM policy statement that must be added to the Amazon SNS topic policy in order to grant the Amazon SQS messaging queue created by Snowflake to subscribe to the topic.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_CLASSIFICATION_RESULT",
+    "summary": "Returns the classification result of the specified object.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_CMK_AKV_CONSENT_URL",
+    "summary": "Returns a consent URL to the Azure Key Vault account related to customer-managed keys.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_CMK_CONFIG",
+    "summary": "Returns configuration information for use with customer-managed keys (CMKs) and Tri-Secret Secure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_CMK_INFO",
+    "summary": "Returns a status about your customer-managed key (CMK) for use with Tri-Secret Secure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_CMK_KMS_KEY_POLICY",
+    "summary": "Returns an ARRAY containing a snippet of the AWS Key Management Service policy information related to customer-managed keys.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_COMPUTE_POOL_PENDING_MAINTENANCE",
+    "summary": "Retrieves information about pending Snowflakemaintenance actions for compute poolsin the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_DEBUG_STATUS",
+    "summary": "Returns thesession debug modestatus of the current session.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_DIRECTORY_TABLE_STATUS",
+    "summary": "Returns a list of records that contain thedirectory tableconsistency status for stages in your account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_GCP_KMS_CMK_GRANT_ACCESS_CMD",
+    "summary": "Returns a Google Cloud gcloud command to obtain policy information for the Google Cloud Key Management Service for use with customer-managed keys.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_HASH_FOR_APPLICATION",
+    "summary": "Returns the hash value for a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$GET_ICEBERG_TABLE_INFORMATION",
+    "summary": "Returns the location of the root metadata file and status of the latest snapshot for anApache Iceberg\u2122 table.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_LOGIN_FAILURE_DETAILS",
+    "summary": "Returns a JSON object that represents an unsuccessful login attempt associated with External OAuth, SAML, or key pair authentication.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_PREDECESSOR_RETURN_VALUE",
+    "summary": "Retrieves the return value for the predecessor task in atask graph.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_PREVIEW_ACCESS_STATUS",
+    "summary": "Determine if access to all preview features is enabled or disabled.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_PRIVATELINK",
+    "summary": "Verifies whether your current account is authorized for private connectivity to the Snowflake service.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_PRIVATELINK_AUTHORIZED_ENDPOINTS",
+    "summary": "Returns a list of the authorized endpoints for your current account to use with private connectivity to the Snowflake service.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_PRIVATELINK_CONFIG",
+    "summary": "Returns a JSON representation of the Snowflake account information necessary to facilitate the self-service configuration of private connectivity to the Snowflake service or Snowflake internal stages.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_PRIVATELINK_ENDPOINT_REGISTRATIONS",
+    "summary": "Returns the registered private endpoints that can route your connection to the Snowflake service.",
+    "category": ""
+  },
+  {
+    "name": "SYSTEM$GET_PRIVATELINK_ENDPOINTS_INFO",
+    "summary": "Returns the status of all private connectivity endpoints that you provision.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_REFERENCED_OBJECT_ID_HASH",
+    "summary": "Returns the hash of the entity ID of the consumer object.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_RESULTSET_STATUS",
+    "summary": "Returns the status of aRESULTSETin a Snowflake Scripting stored procedure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_SERVICE_DNS_DOMAIN",
+    "summary": "Given a schema name, returns that schema\u2019s DNS namespace hash as a string.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_SERVICE_LOGS",
+    "summary": "Retrieves local logs from aSnowpark Container Services servicecontainer.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_SERVICE_STATUS \u2014 DEPRECATED",
+    "summary": "Retrieves the status of aSnowpark Container Services service.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_SNOWFLAKE_PLATFORM_INFO",
+    "summary": "Returns platform information for the cloud provider that hosts your Snowflake account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_TAG",
+    "summary": "Returns the tag value associated with the specified Snowflake object or column.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_TAG_ALLOWED_VALUES",
+    "summary": "Returns a comma-separated list of string values that can be set on asupported object, or NULL to indicate the tag key does not have any specified string values and accepts allpossiblestring values.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_TAG_ON_CURRENT_COLUMN",
+    "summary": "Returns the tag string value assigned to the column based upon the specified tag or NULL if a tag is not assigned to the specified column.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_TAG_ON_CURRENT_TABLE",
+    "summary": "Returns the tag string value assigned to the table based upon the specified tag or NULL if a tag is not assigned to the specified table.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GET_TASK_GRAPH_CONFIG",
+    "summary": "Returns the value of the configuration string for the task currently executing when invoked from the statement or stored procedure defined by the task.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$GLOBAL_ACCOUNT_SET_PARAMETER",
+    "summary": "Enables replication and failover features for a specified account in anorganization.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$HOLD_PRIVILEGE_ON_ACCOUNT",
+    "summary": "Indicates if a privilege has been granted to a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$INITIATE_MOVE_ORGANIZATION_ACCOUNT",
+    "summary": "Starts the process of moving anorganization accountto a new region.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$INTERNAL_STAGES_PUBLIC_ACCESS_STATUS",
+    "summary": "Checks to see whether public IP addresses are allowed to access the internal stage of the current Snowflake account on Microsoft Azure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$IS_APPLICATION_ALL_MANDATORY_TELEMETRY_EVENT_DEFINITIONS_ENABLED",
+    "summary": "Indicates that the AUTHORIZE_TELEMETRY_EVENT_SHARING property has been set on the app.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$IS_APPLICATION_AUTHORIZED_FOR_TELEMETRY_EVENT_SHARING",
+    "summary": "Indicates that the AUTHORIZE_TELEMETRY_EVENT_SHARING has been set on the app.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$IS_APPLICATION_INSTALLED_FROM_SAME_ACCOUNT",
+    "summary": "Shows if an app is installed on the same account as the application package it is based on.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$IS_APPLICATION_SHARING_EVENTS_WITH_PROVIDER",
+    "summary": "Shows if event sharing is enabled.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$IS_GLOBAL_DATA_SHARING_ENABLED_FOR_ACCOUNT",
+    "summary": "Specifies whether Cross-Cloud Auto-Fulfillment is enabled or disabled on an account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$IS_LISTING_PURCHASED",
+    "summary": "Returns TRUE if the consumer account querying data has purchased the listing, otherwise returns FALSE.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$IS_LISTING_TRIAL",
+    "summary": "Limits the functionality of a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$LAST_CHANGE_COMMIT_TIME",
+    "summary": "Returns a token that can be used to detect whether a database table or view changed between two calls to the function.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$LINK_ACCOUNT_OBJECTS_BY_NAME",
+    "summary": "Adds a global identifier to account objects in the target (current) account that were created using scripts and that match objects with the same names in the source account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$LINK_ORGANIZATION_USER",
+    "summary": "Links anorganization userwith a user that already exists in the regular account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$LINK_ORGANIZATION_USER_GROUP",
+    "summary": "Links anorganization user groupwith an access control role that already exists in the regular account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$LIST_APPLICATION_RESTRICTED_FEATURES",
+    "summary": "Returns a JSON object containing a list of restricted features that the consumer has allowed a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$LIST_ICEBERG_TABLES_FROM_CATALOG",
+    "summary": "Lists tables in a remote",
+    "category": "iceberg-tm"
+  },
+  {
+    "name": "SYSTEM$LIST_NAMESPACES_FROM_CATALOG",
+    "summary": "Lists the namespaces in a remote",
+    "category": "iceberg-tm"
+  },
+  {
+    "name": "SYSTEM$LOG, SYSTEM$LOG_<LEVEL> (FOR SNOWFLAKE SCRIPTING)",
+    "summary": "Logs a message at the specified severity level.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$MIGRATE_SAML_IDP_REGISTRATION",
+    "summary": "Migrates an existing SAML identity provider (i.e. IdP) configuration as defined by the account parameterSAML_IDENTITY_PROVIDERto a security integration.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$PIPE_FORCE_RESUME",
+    "summary": "Forces a pipe paused usingALTER PIPEto resume.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$PIPE_REBINDING_WITH_NOTIFICATION_CHANNEL",
+    "summary": "Retries the notification channel binding process when a replicated pipe has not been successfully bound to a notification channel during replication time.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$PIPE_STATUS",
+    "summary": "Retrieves a JSON representation of the current status of a pipe.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$PROVISION_PRIVATELINK_ENDPOINT",
+    "summary": "Provisions a private connectivity endpoint in the Snowflake VPC or VNet to enable Snowflake to connect to an external service using private connectivity.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$QUERY_REFERENCE",
+    "summary": "Returns aquery referencethat you can pass to a stored procedure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$REFERENCE",
+    "summary": "Returns areferenceto an object (a table, view, or function).",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$REGISTER_CMK_INFO",
+    "summary": "Registers your customer-managed key (CMK) for use with Tri-Secret Secure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$REGISTER_PRIVATELINK_ENDPOINT",
+    "summary": "Registers a private connectivity endpoint to route your connection to the Snowflake service.",
+    "category": ""
+  },
+  {
+    "name": "SYSTEM$REGISTRY_LIST_IMAGES \u2014 DEPRECATED",
+    "summary": "Lists images in animage repository.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$REMOVE_ALL_REFERENCES",
+    "summary": "Deletes all associations to the reference.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$REMOVE_REFERENCE",
+    "summary": "Remove an association from the reference to an object in the consumer account and returns a unique system-generated alias for the reference.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$RESTORE_PRIVATELINK_ENDPOINT",
+    "summary": "Restores a private connectivity endpoint in the Snowflake VPC or VNet to enable Snowflake to connect to an external service using private connectivity.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$REVOKE_PRIVATELINK",
+    "summary": "Disables private connectivity to the Snowflake service for the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$REVOKE_STAGE_PRIVATELINK_ACCESS",
+    "summary": "Revokes the authorization for Snowflake to access the Microsoft Azure Private Endpoint forAzure private endpoints for internal stagesfor the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SCHEDULE_ASYNC_REPLICATION_GROUP_REFRESH",
+    "summary": "Starts a refresh operation for a replication group or a failover group, in the background.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SEND_NOTIFICATIONS_TO_CATALOG",
+    "summary": "Sends a notification toSnowflake Open Catalogto update Snowflake-managedApache Iceberg\u2122 tablesin",
+    "category": "opencatalog"
+  },
+  {
+    "name": "SYSTEM$SET_APPLICATION_RESTRICTED_FEATURE_ACCESS",
+    "summary": "Enables a restricted feature for a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$SET_EVENT_SHARING_ACCOUNT_FOR_REGION",
+    "summary": "Sets the event account for a region.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SET_REFERENCE",
+    "summary": "Called by a",
+    "category": "native-app"
+  },
+  {
+    "name": "SYSTEM$SET_RETURN_VALUE",
+    "summary": "Explicitly sets the return value for a task.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SET_SPAN_ATTRIBUTES (FOR SNOWFLAKE SCRIPTING)",
+    "summary": "Sets attribute name and value associated with a span containing trace events.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SHOW_ACTIVE_BEHAVIOR_CHANGE_BUNDLES",
+    "summary": "Returns an array of the currently availablebehavior change release bundles, the default state of each bundle, and the actual state of the bundle for the current account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SHOW_BUDGETS_FOR_RESOURCE",
+    "summary": "Returns a string containing a list of thebudgetsthat track a specified resource (for example, a table or a schema).",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SHOW_BUDGETS_IN_ACCOUNT",
+    "summary": "Returns thebudgetsin the account for which you have access privileges.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SHOW_EVENT_SHARING_ACCOUNTS",
+    "summary": "Shows event accounts in a provider organization.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SHOW_MOVE_ORGANIZATION_ACCOUNT_STATUS",
+    "summary": "Returns the status of an attempt to move anorganization account.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SHOW_OAUTH_CLIENT_SECRETS",
+    "summary": "Returns the client secrets in a string.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SHOW_SENSITIVE_DATA_MONITORED_ENTITIES",
+    "summary": "Returns a JSON array of databases or schemas that are associated with a classification profile, which indicates that objects in these entities are monitored byautomatic sensitive data classification.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$SNOWPIPE_STREAMING_UPDATE_CHANNEL_OFFSET_TOKEN",
+    "summary": "Updates the offset token for a particular channel used by Snowpipe Streaming with a new offset token.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$START_OAUTH_FLOW",
+    "summary": "Initiates the OAUTH client flow, returning a URL you use in a browser to complete the OAuth consent process.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$START_USER_EMAIL_VERIFICATION",
+    "summary": "Starts theemail verification process for a user.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$STREAM_BACKLOG",
+    "summary": "Returns the set of table versions between the currentoffsetfor a specified stream and the current timestamp.",
+    "category": "Table functions,System functions"
+  },
+  {
+    "name": "SYSTEM$STREAM_GET_TABLE_TIMESTAMP",
+    "summary": "Returns the timestamp in nanoseconds of the latest table version at or before the current offset for the specified stream.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$STREAM_HAS_DATA",
+    "summary": "Indicates whether a specified stream contains change data capture (CDC) records.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$TASK_DEPENDENTS_ENABLE",
+    "summary": "Recursively resumes a specified task and all its dependent tasks.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$TASK_RUNTIME_INFO",
+    "summary": "Returns information about the current task run.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$TRIGGER_LISTING_REFRESH",
+    "summary": "Triggers a one-time, on-demand data refresh for a provider\u2019s databases or listings, accessible to all consumers.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$TYPEOF",
+    "summary": "Returns a string representing the SQL data type associated with an expression.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$UNBLOCK_INTERNAL_STAGES_PUBLIC_ACCESS",
+    "summary": "Allows traffic from public IP addresses to access the internal stage of the current Snowflake account on Microsoft Azure.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$UNLINK_ORGANIZATION_USER",
+    "summary": "Unlinks a user object from anorganization userso it can be managed as a local user going forward.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$UNLINK_ORGANIZATION_USER_GROUP",
+    "summary": "Unlinks an access control role from anorganization user groupso it can be managed as a local role going forward.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$UNREGISTER_PRIVATELINK_ENDPOINT",
+    "summary": "Unregisters a private connectivity endpoint to route your connection to the Snowflake service.",
+    "category": ""
+  },
+  {
+    "name": "SYSTEM$UNSET_EVENT_SHARING_ACCOUNT_FOR_REGION",
+    "summary": "Unsets the events account for a region.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$USER_TASK_CANCEL_ONGOING_EXECUTIONS",
+    "summary": "Cancels a run of the specified task that the system has already started to process (that is, a run with an EXECUTING state in theTASK_HISTORYoutput).",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$VALIDATE_STORAGE_INTEGRATION",
+    "summary": "Validates the configuration for a specified storage integration.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$VERIFY_CATALOG_INTEGRATION",
+    "summary": "Verifies the configuration for a specified catalog integration for",
+    "category": "iceberg-tm"
+  },
+  {
+    "name": "SYSTEM$VERIFY_CMK_INFO",
+    "summary": "Verifies your customer-managed key (CMK) configuration and returns a message about the registered CMK.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$VERIFY_EXTERNAL_OAUTH_TOKEN",
+    "summary": "Determines whether yourExternal OAuthaccess token is valid or has expired and needs to be regenerated.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$VERIFY_EXTERNAL_VOLUME",
+    "summary": "Verifies the configuration for a specifiedexternal volume.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$WAIT",
+    "summary": "Waits for the specified amount of time before proceeding.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$WAIT_FOR_SERVICES",
+    "summary": "Waits for one or moreSnowpark Container Services servicesto reach the READY state (or becomes upgraded) before returning.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$WHITELIST \u2014 DEPRECATED",
+    "summary": "Returns hostnames and port numbers to add to your firewall\u2019s allowed list so that you can access Snowflake from behind your firewall.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTEM$WHITELIST_PRIVATELINK \u2014 DEPRECATED",
+    "summary": "Returns hostnames and port numbers forAWS PrivateLink,Azure Private Link, andGoogle Cloud Private Service Connectdeployments to add to your firewall\u2019s allowed list so that you can access Snowflake from behind your firewall.",
+    "category": "System functions"
+  },
+  {
+    "name": "SYSTIMESTAMP",
+    "summary": "Returns the current timestamp for the system.",
+    "category": "Context functions"
+  },
+  {
+    "name": "TAG_REFERENCES",
+    "summary": "Returns a table in which each row displays an association between a tag and value.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "TAG_REFERENCES_ALL_COLUMNS",
+    "summary": "Returns a table in which each row displays the tag name and tag value assigned to a specific column.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "TAG_REFERENCES_WITH_LINEAGE",
+    "summary": "Returns a table in which each row displays an association between the specified tag and the Snowflake object to which the tag is associated.",
+    "category": "Account Usage table functions,Table functions"
+  },
+  {
+    "name": "TAN",
+    "summary": "Computes the tangent of its argument; the argument should be expressed in radians.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "TANH",
+    "summary": "Computes the hyperbolic tangent of its argument.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "TASK_DEPENDENTS",
+    "summary": "This table function returns the list of childtasksfor a given root task in atask graph.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "TASK_HISTORY",
+    "summary": "You can use this table function to query the history oftaskusage within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "TEXT_HTML",
+    "summary": "Returns a JSON object that specifies the HTML message to use for a notification.",
+    "category": "Notification functions"
+  },
+  {
+    "name": "TEXT_PLAIN",
+    "summary": "Returns a JSON object that specifies the plain text message to use for a notification.",
+    "category": "Notification functions"
+  },
+  {
+    "name": "TIME_FROM_PARTS",
+    "summary": "Creates a time from individual numeric components.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TIME_SLICE",
+    "summary": "Calculates the beginning or end of a \u201cslice\u201d of time, where the length of the slice is a multiple of a standard unit of time (minute, hour, day, etc.).",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TIMEADD",
+    "summary": "Adds the specified value for the specified date or time part to a date, time, or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TIMEDIFF",
+    "summary": "Calculates the difference between two date, time, or timestamp expressions based on the specified date or time part.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TIMESTAMP_FROM_PARTS",
+    "summary": "Creates a timestamp from individual numeric components.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TIMESTAMPADD",
+    "summary": "Adds the specified value for the specified date or time part to a date, time, or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TIMESTAMPDIFF",
+    "summary": "Calculates the difference between two date, time, or timestamp expressions based on the specified date or time part.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TO_ARRAY",
+    "summary": "Converts the input expression to anARRAYvalue.",
+    "category": "Conversion functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "TO_BINARY",
+    "summary": "Converts the input expression to a binary value.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TO_BOOLEAN",
+    "summary": "Converts the input text or numeric expression to aBOOLEANvalue.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TO_CHAR , TO_VARCHAR",
+    "summary": "Converts the input expression to a string.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TO_DATE , DATE",
+    "summary": "Converts an input expression to a date.",
+    "category": "Conversion functions,Date & time functions"
+  },
+  {
+    "name": "TO_DECIMAL , TO_NUMBER , TO_NUMERIC",
+    "summary": "Converts an input expression to a fixed-point number.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TO_DOUBLE",
+    "summary": "Converts an expression to a double-precision floating-point number.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TO_FILE",
+    "summary": "Constructs a value of typeFILEfrom a file location or from metadata.",
+    "category": ""
+  },
+  {
+    "name": "TO_GEOGRAPHY",
+    "summary": "Parses an input and returns a value of typeGEOGRAPHY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "TO_GEOMETRY",
+    "summary": "Parses an input and returns a value of typeGEOMETRY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "TO_JSON",
+    "summary": "Converts aVARIANTvalue to a string containing the JSON representation of the value.",
+    "category": "Conversion functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "TO_OBJECT",
+    "summary": "Converts the input value to anOBJECT.",
+    "category": "Conversion functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "TO_QUERY",
+    "summary": "Returns a result set based on SQL text and an optional set of arguments that are passed to the SQL text if it is parameterized.",
+    "category": "Table functions"
+  },
+  {
+    "name": "TO_TIME , TIME",
+    "summary": "Converts an input expression into a time.",
+    "category": "Conversion functions,Date & time functions"
+  },
+  {
+    "name": "TO_TIMESTAMP / TO_TIMESTAMP_*",
+    "summary": "Converts an input expression into the corresponding timestamp.",
+    "category": "Conversion functions,Date & time functions"
+  },
+  {
+    "name": "TO_VARIANT",
+    "summary": "Converts any value to aVARIANTvalue or NULL (if input is NULL).",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TO_XML",
+    "summary": "Converts aVARIANTto a VARCHAR that contains anXMLrepresentation of the value.",
+    "category": "Conversion functions,Semi-structured and structured data functions"
+  },
+  {
+    "name": "TRANSFORM",
+    "summary": "Transforms anarraybased on the logic in a lambda expression.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "TRANSLATE (SNOWFLAKE.CORTEX)",
+    "summary": "Translates the given input text from one supported language to another.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRANSLATE",
+    "summary": "Replaces characters in a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRIM",
+    "summary": "Removes leading and trailing characters from a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRUNCATE , TRUNC",
+    "summary": "Rounds the input expression down to the nearest (or equal) value closer to zero.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "TRUNCATE, TRUNC",
+    "summary": "Truncates a DATE, TIME, or TIMESTAMP value to the specified precision.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "TRY_BASE64_DECODE_BINARY",
+    "summary": "A special version ofBASE64_DECODE_BINARYthat returns a NULL value if an error occurs during decoding.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRY_BASE64_DECODE_STRING",
+    "summary": "A special version ofBASE64_DECODE_STRINGthat returns a NULL value if an error occurs during decoding.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRY_CAST",
+    "summary": "A special version ofCAST , ::that is available for a subset of data type conversions.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TRY_COMPLETE (SNOWFLAKE.CORTEX)",
+    "summary": "Performs the same operation as theCOMPLETEfunction but returns NULL instead of raising an error when the operation cannot be performed.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRY_DECRYPT",
+    "summary": "A special version ofDECRYPTthat returns a NULL value if an error occurs during decryption.",
+    "category": "Encryption functions"
+  },
+  {
+    "name": "TRY_DECRYPT_RAW",
+    "summary": "A special version ofDECRYPT_RAWthat returns a NULL value if an error occurs during decryption.",
+    "category": "Encryption functions"
+  },
+  {
+    "name": "TRY_HEX_DECODE_BINARY",
+    "summary": "A special version ofHEX_DECODE_BINARYthat returns a NULL value if an error occurs during decoding.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRY_HEX_DECODE_STRING",
+    "summary": "A special version ofHEX_DECODE_STRINGthat returns a NULL value if an error occurs during decoding.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "TRY_PARSE_JSON",
+    "summary": "A special version ofPARSE_JSONthat returns a NULL value if an error occurs during parsing.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "TRY_TO_BINARY",
+    "summary": "A special version ofTO_BINARYthat performs the same operation (i.e. converts an input expression to a binary value), but with error handling support (i.e. if the conversion cannot be performed, it returns a NULL value instead of raising an error).",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TRY_TO_BOOLEAN",
+    "summary": "A special version ofTO_BOOLEANthat performs the same operation (that is, converts an input expression to a Boolean value), but with error-handling support.",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TRY_TO_DATE",
+    "summary": "A special version of theTO_DATEfunction that performs the same operation (i.e. converts an input expression to a date), but with error-handling support (i.e. if the conversion cannot be performed, it returns a NULL value instead of raising an error).",
+    "category": "Conversion functions,Date & time functions"
+  },
+  {
+    "name": "TRY_TO_DECIMAL, TRY_TO_NUMBER, TRY_TO_NUMERIC",
+    "summary": "A special version ofTO_DECIMAL , TO_NUMBER , TO_NUMERICthat performs the same operation (i.e. converts an input expression to a fixed-point number), but with error-handling support (i.e. if the conversion cannot be performed, it returns a NULL value instead of raising an error).",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TRY_TO_DOUBLE",
+    "summary": "A special version ofTO_DOUBLEthat performs the same operation (that is, converts an input expression to a double-precision floating-point number), but with error-handling support (that is, if the conversion can\u2019t be performed, it returns a NULL value instead of raising an error).",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TRY_TO_FILE",
+    "summary": "A version ofTO_FILEthat returns NULL instead of raising an error.",
+    "category": ""
+  },
+  {
+    "name": "TRY_TO_GEOGRAPHY",
+    "summary": "Parses an input and returns a value of typeGEOGRAPHY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "TRY_TO_GEOMETRY",
+    "summary": "Parses an input and returns a value of typeGEOMETRY.",
+    "category": "Geospatial functions,Conversion functions"
+  },
+  {
+    "name": "TRY_TO_TIME",
+    "summary": "A special version ofTO_TIME , TIMEthat performs the same operation (i.e. converts an input expression into a time), but with error-handling support (i.e. if the conversion cannot be performed, it returns a NULL value instead of raising an error).",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TRY_TO_TIMESTAMP / TRY_TO_TIMESTAMP_*",
+    "summary": "A special version ofTO_TIMESTAMP / TO_TIMESTAMP_*that performs the same operation (i.e. converts an input expression into a timestamp), but with error-handling support (i.e. if the conversion cannot be performed, it returns a NULL value instead of raising an error).",
+    "category": "Conversion functions"
+  },
+  {
+    "name": "TYPEOF",
+    "summary": "Returns the type of a value stored in aVARIANTcolumn.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "UNICODE",
+    "summary": "Returns the Unicode code point for the first Unicode character in a string.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "UNIFORM",
+    "summary": "Generates a uniformly-distributed pseudo-random number in the inclusive range [min,max].",
+    "category": "Data generation functions"
+  },
+  {
+    "name": "UPPER",
+    "summary": "Returns the input string with all characters converted to uppercase.",
+    "category": "String & binary functions"
+  },
+  {
+    "name": "UUID_STRING",
+    "summary": "Generates either a version 4 (random) or version 5 (named) RFC 4122-compliant universally unique identifier (UUID) as a formatted string.",
+    "category": "String & binary functions,Data generation functions"
+  },
+  {
+    "name": "VALIDATE",
+    "summary": "Validates the files loaded in a past execution of theCOPY INTO <table>command and returns all the errors encountered during the load, rather than just the first error.",
+    "category": "Table functions"
+  },
+  {
+    "name": "VALIDATE_PIPE_LOAD",
+    "summary": "This table function can be used to validate data files processed bySnowpipewithin a specified time range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "VAR_POP",
+    "summary": "Returns the population variance of non-NULL records in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "VAR_SAMP",
+    "summary": "Returns the sample variance of non-NULL records in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "VARIANCE , VARIANCE_SAMP",
+    "summary": "Returns the sample variance of non-NULL records in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "VARIANCE_POP",
+    "summary": "Returns the population variance of non-NULL records in a group.",
+    "category": "Aggregate functions,Window function syntax and usage"
+  },
+  {
+    "name": "VECTOR_COSINE_SIMILARITY",
+    "summary": "Computes the cosine similarity between twovectors.",
+    "category": "Vector similarity functions"
+  },
+  {
+    "name": "VECTOR_INNER_PRODUCT",
+    "summary": "Computes the inner product of twovectors.",
+    "category": "Vector similarity functions"
+  },
+  {
+    "name": "VECTOR_L1_DISTANCE",
+    "summary": "Computes the L1 distance between twovectors.",
+    "category": "Vector similarity functions"
+  },
+  {
+    "name": "VECTOR_L2_DISTANCE",
+    "summary": "Computes the L2 distance between twovectors.",
+    "category": "Vector similarity functions"
+  },
+  {
+    "name": "WAREHOUSE_LOAD_HISTORY",
+    "summary": "This table function can be used to query the activity history (defined as the \u201cquery load\u201d) for a single warehouse within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "WAREHOUSE_METERING_HISTORY",
+    "summary": "This table function can be used in queries to return the hourly credit usage for a single warehouse (or all the warehouses in your account) within a specified date range.",
+    "category": "Information Schema,Table functions"
+  },
+  {
+    "name": "WIDTH_BUCKET",
+    "summary": "Constructs equi-width histograms, in which the histogram range is divided into intervals of identical size, and returns the bucket number into which the value of an expression falls, after it has been evaluated.",
+    "category": "Numeric functions"
+  },
+  {
+    "name": "XMLGET",
+    "summary": "Extracts anXMLelement object (often referred to as simply atag) from the content of the outer XML element based on the name and instance number of the specified tag.",
+    "category": "Semi-structured and structured data functions"
+  },
+  {
+    "name": "YEAR* / DAY* / WEEK* / MONTH / QUARTER",
+    "summary": "Extracts the corresponding date part from a date or timestamp.",
+    "category": "Date & time functions"
+  },
+  {
+    "name": "ZEROIFNULL",
+    "summary": "Returns 0 if its argument is null; otherwise, returns its argument.",
+    "category": "Conditional expression functions"
+  },
+  {
+    "name": "ZIPF",
+    "summary": "Returns a Zipf-distributed integer, forNelements and characteristic exponents.",
+    "category": "Data generation functions"
+  }
+]
