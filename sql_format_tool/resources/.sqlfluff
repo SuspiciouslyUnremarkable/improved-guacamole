@@ -6,7 +6,7 @@ dialect = snowflake
 templater = dbt
 
 [sqlfluff:templater:dbt]
-project_dir = ../../
+project_dir = ./dbt
 
 
 
@@ -72,8 +72,8 @@ preferred_not_equal_style = consistent
 
 [sqlfluff:rules:convention.coalesce]
 
-[sqlfluff:rules:convention.select_trailing_comma]
-select_clause_trailing_comma = forbid
+; [sqlfluff:rules:convention.select_trailing_comma]
+; select_clause_trailing_comma = forbid
 
 [sqlfluff:rules:convention.is_null]
 
@@ -86,38 +86,36 @@ preferred_type_casting_style = consistent
 
 [sqlfluff:rules:convention.join_condition]
 
-[sqlfluff:rules:layout.spacing]
-
 
 [sqlfluff:rules:layout.indent]
 
 
 [sqlfluff:layout:type:comma]
-line_position = leading:strict
+line_position = leading
 
 
-[sqlfluff:layout.functions]
+[sqlfluff:rules:layout.functions]
 
-[sqlfluff:layout.cte_bracket]
+[sqlfluff:rules:layout.cte_bracket]
 
-[sqlfluff:layout.cte_newline]
+[sqlfluff:rules:layout.cte_newline]
 
-[sqlfluff:layout.select_targets]
+[sqlfluff:rules:layout.select_targets]
 
-[sqlfluff:layout.select_modifiers]
+[sqlfluff:rules:layout.select_modifiers]
 
-[sqlfluff:layout.set_operators]
+[sqlfluff:rules:layout.set_operators]
 line_position = alone:strict
 
-[sqlfluff:layout.end_of_file]
+[sqlfluff:rules:layout.end_of_file]
 
-[sqlfluff:layout.start_of_file]
+[sqlfluff:rules:layout.start_of_file]
 
-[sqlfluff:layout.keyword_newline]
+[sqlfluff:rules:layout.keyword_newline]
 
-[sqlfluff:layout.operators]
+[sqlfluff:rules:layout.operators]
 
-[sqlfluff:layout.newlines]
+[sqlfluff:rules:layout.newlines]
 maximum_empty_lines_between_statements = 1
 maximum_empty_lines_inside_statements = 0
 
