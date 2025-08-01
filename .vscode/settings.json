@@ -1,0 +1,6 @@
+{
+    "terminal.integrated.env.windows": {
+        "DBT_PROFILES_DIR": "${workspaceFolder}/dbt",
+        "DBT_PROJECT_DIR": "${workspaceFolder}/dbt"
+    }
+}
